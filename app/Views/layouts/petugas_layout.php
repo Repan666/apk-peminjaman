@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Admin Panel' ?> | APKLOAN</title>
+    <title><?= $title ?? 'Petugas' ?> | APKLOAN</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -56,15 +56,10 @@
             color: white !important;
         }
 
-        /* Class Active Otomatis dari CI4 */
         .nav-link.active {
             background: var(--emerald-500) !important;
             color: white !important;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .nav-link.active i {
-            opacity: 1;
         }
 
         .menu-label {
@@ -96,9 +91,7 @@
             z-index: 900;
         }
 
-        .content-padding {
-            padding: 40px;
-        }
+        .content-padding { padding: 40px; }
 
         @media (max-width: 992px) {
             .sidebar { transform: translateX(-100%); }
@@ -114,33 +107,30 @@
             <span class="fs-4 fw-bold text-white">APK<span class="text-success">LOAN</span></span>
         </div>
         
-        <span class="menu-label">MENU UTAMA</span>
-        <a class="nav-link <?= url_is('admin/dashboard*') ? 'active' : '' ?>" href="<?= base_url('admin/dashboard') ?>">
+        <span class="menu-label">PEMANTAUAN</span>
+        <a class="nav-link <?= url_is('petugas/dashboard*') ? 'active' : '' ?>" href="<?= base_url('petugas/dashboard') ?>">
             <i class="bi bi-grid-1x2-fill"></i> Dashboard
         </a>
         
-        <a class="nav-link <?= url_is('admin/users*') ? 'active' : '' ?>" href="<?= base_url('admin/users') ?>">
-            <i class="bi bi-people"></i> Kelola User
+        <span class="menu-label">VALIDASI</span>
+        <a class="nav-link <?= url_is('petugas/peminjaman*') ? 'active' : '' ?>" href="<?= base_url('petugas/peminjaman') ?>">
+            <i class="bi bi-check2-square text-warning"></i> Persetujuan Pinjam
         </a>
-        
-        <span class="menu-label">INVENTARIS</span>
-        <a class="nav-link <?= url_is('admin/kategori*') ? 'active' : '' ?>" href="<?= base_url('admin/kategori') ?>">
-            <i class="bi bi-tags-fill"></i> Kategori Alat
-        </a>
-        <a class="nav-link <?= url_is('admin/alat*') ? 'active' : '' ?>" href="<?= base_url('admin/alat') ?>">
-            <i class="bi bi-box-seam"></i> Kelola Alat
+        <a class="nav-link <?= url_is('petugas/pengembalian*') ? 'active' : '' ?>" href="<?= base_url('petugas/pengembalian') ?>">
+            <i class="bi bi-arrow-left-right text-info"></i> Verifikasi Kembali
         </a>
 
-        <span class="menu-label">TRANSAKSI</span>
-        <a class="nav-link <?= url_is('peminjaman*') ? 'active' : '' ?>" href="#"><i class="bi bi-arrow-right-square"></i> Peminjaman</a>
-        <a class="nav-link <?= url_is('pengembalian*') ? 'active' : '' ?>" href="#"><i class="bi bi-arrow-left-square"></i> Pengembalian</a>
+        <span class="menu-label">LAPORAN</span>
+        <a class="nav-link <?= url_is('petugas/laporan*') ? 'active' : '' ?>" href="<?= base_url('petugas/laporan') ?>">
+            <i class="bi bi-printer"></i> Cetak Laporan
+        </a>
     </div>
 
     <div class="main-wrapper">
         <header class="top-navbar">
             <div>
-                <span class="text-muted">Selamat Datang,</span> 
-                <span class="fw-bold text-dark"><?= session()->get('nama') ?? 'Administrator' ?></span>
+                <span class="text-muted">Login sebagai Petugas:</span> 
+                <span class="fw-bold text-dark"><?= session()->get('nama') ?></span>
             </div>
             <a href="<?= base_url('logout') ?>" class="btn btn-outline-danger btn-sm px-4 rounded-pill">
                 <i class="bi bi-box-arrow-right me-2"></i>Logout

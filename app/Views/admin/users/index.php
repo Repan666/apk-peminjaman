@@ -1,6 +1,11 @@
 <?= $this->extend('layouts/admin_layout') ?>
 <?= $this->section('content') ?>
 
+<?php 
+    // Mengambil ID user yang sedang login dari session
+    $currentId = session()->get('user_id'); 
+?>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="fw-bold text-slate-900 mb-1">Kelola User</h2>
@@ -57,18 +62,24 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="<?= base_url('admin/users/edit/'.$u['id']) ?>" class="btn btn-sm btn-light border text-warning">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-
-                                <?php if($u['status']): ?>
-                                <form action="<?= base_url('admin/users/nonaktif/'.$u['id']) ?>" method="post" onsubmit="return confirm('Yakin ingin menonaktifkan user ini?')">
-                                    <?= csrf_field(); ?>
-                                    <button class="btn btn-sm btn-light border text-danger">
-                                        <i class="bi bi-person-x-fill"></i>
-                                    </button>
-                                </form>
+                                
+                                <?php if($u['role'] != 'admin' || $u['id'] == $currentId): ?>
+                                    <a href="<?= base_url('admin/users/edit/'.$u['id']) ?>" 
+                                       class="btn btn-sm btn-white border text-warning shadow-sm" title="Edit User">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
                                 <?php endif; ?>
+
+                                <?php if($u['role'] != 'admin' && $u['status']): ?>
+                                    <form action="<?= base_url('admin/users/nonaktif/'.$u['id']) ?>" 
+                                          method="post" 
+                                          onsubmit="return confirm('Yakin ingin menonaktifkan user ini?')">
+                                        <?= csrf_field(); ?>
+                                        <button class="btn btn-sm btn-white border text-danger shadow-sm" title="Nonaktifkan">
+                                            <i class="bi bi-trash3"></i> </button>
+                                    </form>
+                                <?php endif; ?>
+
                             </div>
                         </td>
                     </tr>
