@@ -46,14 +46,22 @@ class User extends BaseController
     }
 
     public function edit($id)
-    {
-        $data = [
-            'title' => 'Edit User',
-            'user'  => $this->userModel->find($id)
-        ];
+{
+    $user = $this->userModel->find($id);
 
-        return view('admin/users/edit', $data);
+    // Cegah admin edit admin lain
+    if ($user['role'] == 'admin' && $user['id'] != session()->get('user_id')) {
+        return redirect()->to('/admin/users')
+            ->with('error', 'Tidak boleh mengedit sesama admin.');
     }
+
+    $data = [
+        'title' => 'Edit User',
+        'user'  => $user
+    ];
+
+    return view('admin/users/edit', $data);
+}
 
     public function update($id)
     {
@@ -73,9 +81,17 @@ class User extends BaseController
     }
 
     public function nonaktif($id)
-    {
-        $this->userModel->update($id, ['status' => 0]);
+{
+    $user = $this->userModel->find($id);
 
-        return redirect()->to('/admin/users')->with('success', 'User dinonaktifkan');
+    if ($user['role'] == 'admin') {
+        return redirect()->to('/admin/users')
+            ->with('error', 'Admin tidak dapat dinonaktifkan.');
     }
+
+    $this->userModel->update($id, ['status' => 0]);
+
+    return redirect()->to('/admin/users')
+        ->with('success', 'User dinonaktifkan');
+}
 }

@@ -11,7 +11,9 @@ class CreateUsers extends Migration
         $this->forge->addField([
             'id' => [
                 'type' => 'INT',
-                'auto_increment' => true
+                'constraint' => 11,
+                'unsigned' => true,
+                'auto_increment' => true,
             ],
             'nama' => [
                 'type' => 'VARCHAR',

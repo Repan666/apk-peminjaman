@@ -4,7 +4,7 @@
 <div class="mb-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= base_url('users') ?>" class="text-decoration-none">Kelola User</a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('admin/users') ?>" class="text-decoration-none">Kelola User</a></li>
             <li class="breadcrumb-item active">Edit User</li>
         </ol>
     </nav>
