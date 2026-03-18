@@ -31,7 +31,6 @@
                         <th>Jadwal Pinjam</th>
                         <th>Batas Kembali</th>
                         <th>Status Pengajuan</th>
-                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,11 +87,6 @@
                                 <i class="bi <?= $icon ?> me-1"></i>
                                 <?= strtoupper($r['status']) ?>
                             </span>
-                        </td>
-                        <td class="text-center pe-4">
-                            <button class="btn btn-sm btn-light rounded-circle border shadow-sm" title="Lihat Detail">
-                                <i class="bi bi-eye text-primary"></i>
-                            </button>
                         </td>
                     </tr>
                     <?php endforeach; ?>

@@ -19,16 +19,49 @@ class Peminjaman extends BaseController
 
    public function ajukan()
 {
+    $userId = session()->get('user_id');
+    $alatId = $this->request->getPost('alat_id');
+
+    $tanggalPinjam  = $this->request->getPost('tanggal_pinjam');
+    $tanggalKembali = $this->request->getPost('tanggal_kembali');
+
+    // CEK apakah user masih memiliki peminjaman aktif pada alat yang sama
+    $cek = $this->peminjamanModel
+        ->where('user_id', $userId)
+        ->where('alat_id', $alatId)
+        ->whereIn('status', ['pending','dipinjam','menunggu_verifikasi'])
+        ->first();
+
+    if($cek){
+        return redirect()->back()
+            ->with('error','Anda masih memiliki peminjaman aktif untuk alat ini');
+    }
+
+    // =========================
+    // VALIDASI TANGGAL
+    // =========================
+    if($tanggalKembali < $tanggalPinjam){
+        return redirect()->back()
+            ->with('error','Tanggal kembali tidak boleh lebih kecil dari tanggal pinjam');
+    }
+
     $data = [
-        'user_id'         => session()->get('user_id'),
-        'alat_id'         => $this->request->getPost('alat_id'),
-        'tanggal_pinjam'  => $this->request->getPost('tanggal_pinjam'),
-        'tanggal_kembali' => $this->request->getPost('tanggal_kembali'),
+        'user_id'         => $userId,
+        'alat_id'         => $alatId,
+        'tanggal_pinjam'  => $tanggalPinjam,
+        'tanggal_kembali' => $tanggalKembali,
         'status'          => 'pending',
         'keterangan'      => $this->request->getPost('keterangan')
     ];
 
     $this->peminjamanModel->insert($data);
+    $alat = $this->alatModel->find($alatId);
+    $namaUser = session()->get('nama');
+
+    logAktivitas(
+        'Ajukan Peminjaman',
+        'Peminjam ' . $namaUser . ' mengajukan peminjaman alat: ' . $alat['nama_alat']
+    );
 
     return redirect()->to('/peminjam/riwayat')
         ->with('success','Pengajuan berhasil dikirim, menunggu persetujuan petugas');
@@ -102,6 +135,14 @@ public function ajukanPengembalian($id)
         'status' => 'menunggu_verifikasi',
         'tanggal_dikembalikan' => date('Y-m-d')
     ]);
+
+    $alat = $this->alatModel->find($peminjaman['alat_id']);
+    $namaUser = session()->get('nama');
+
+    logAktivitas(
+        'Ajukan Pengembalian',
+        'Peminjam ' . $namaUser . ' mengajukan pengembalian alat: ' . $alat['nama_alat']
+    );
 
     return redirect()->back()->with('success','Pengembalian diajukan, menunggu verifikasi petugas');
 }

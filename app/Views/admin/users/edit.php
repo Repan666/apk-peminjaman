@@ -41,7 +41,7 @@
                     <select name="role" class="form-select rounded-3">
                         <option value="admin" <?= $user['role']=='admin'?'selected':'' ?>>Admin</option>
                         <option value="petugas" <?= $user['role']=='petugas'?'selected':'' ?>>Petugas</option>
-                        <option value="peminjam" <?= $user['role']=='peminjam'?'selected':'' ?>>Peminjam (Siswa)</option>
+                        <option value="peminjam" <?= $user['role']=='peminjam'?'selected':'' ?>>Peminjam</option>
                     </select>
                 </div>
 

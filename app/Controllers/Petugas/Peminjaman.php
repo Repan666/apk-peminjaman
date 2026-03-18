@@ -86,14 +86,36 @@ public function setuju($id)
         'status' => 'dipinjam'
     ]);
 
+    $namaPetugas = session()->get('nama');
+    logAktivitas(
+    'Setujui Peminjaman',
+    'Petugas ' . $namaPetugas . ' menyetujui peminjaman alat: ' . $alat['nama_alat']
+    );
+
     return redirect()->to('/petugas/peminjaman')
         ->with('success','Peminjaman disetujui');
 }
 public function tolak($id)
 {
+    $peminjaman = $this->peminjamanModel->find($id);
+
+    if(!$peminjaman){
+        return redirect()->back()->with('error','Data tidak ditemukan');
+    }
+
+    $alat = $this->alatModel->find($peminjaman['alat_id']);
+
+    // update sekali saja
     $this->peminjamanModel->update($id,[
         'status' => 'ditolak'
     ]);
+
+    $namaPetugas = session()->get('nama');
+
+    logAktivitas(
+        'Tolak Peminjaman',
+        'Petugas ' . $namaPetugas . ' menolak peminjaman alat: ' . $alat['nama_alat']
+    );
 
     return redirect()->to('/petugas/peminjaman')
         ->with('success','Pengajuan ditolak');
