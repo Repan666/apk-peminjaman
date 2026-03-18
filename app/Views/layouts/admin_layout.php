@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
         :root {
@@ -24,15 +25,31 @@
         }
 
         .sidebar {
-            background-color: var(--slate-900);
-            min-height: 100vh;
-            width: 280px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            padding: 1.5rem;
-        }
+    background-color: var(--slate-900);
+    height: 100vh; /* Ganti min-height jadi height biar pas layar */
+    width: 280px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 1.5rem;
+    
+    /* TAMBAHKAN 2 BARIS INI BRO */
+    overflow-y: auto; 
+    padding-bottom: 3rem; /* Kasih jarak di bawah biar menu terakhir gak nempel bgt */
+}
+
+/* OPSIONAL: Biar scrollbar sidebar-nya cakep/minimalis (khusus Chrome/Edge/Safari) */
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+.sidebar:hover::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+}
 
         .nav-link {
             color: #CBD5E1 !important;
@@ -122,6 +139,10 @@
         <a class="nav-link <?= url_is('admin/users*') ? 'active' : '' ?>" href="<?= base_url('admin/users') ?>">
             <i class="bi bi-people"></i> Kelola User
         </a>
+
+        <a class="nav-link <?= url_is('admin/log-aktivitas*') ? 'active' : '' ?>" href="<?= base_url('admin/log-aktivitas') ?>">
+            <i class="bi bi-journal-text"></i> Log Aktivitas
+        </a>
         
         <span class="menu-label">INVENTARIS</span>
         <a class="nav-link <?= url_is('admin/kategori*') ? 'active' : '' ?>" href="<?= base_url('admin/kategori') ?>">
@@ -132,8 +153,8 @@
         </a>
 
         <span class="menu-label">TRANSAKSI</span>
-        <a class="nav-link <?= url_is('peminjaman*') ? 'active' : '' ?>" href="#"><i class="bi bi-arrow-right-square"></i> Peminjaman</a>
-        <a class="nav-link <?= url_is('pengembalian*') ? 'active' : '' ?>" href="#"><i class="bi bi-arrow-left-square"></i> Pengembalian</a>
+        <a class="nav-link <?= url_is('admin/peminjaman') ? 'active' : '' ?>" href="<?= base_url('admin/peminjaman') ?>"><i class="bi bi-arrow-right-square"></i> Peminjaman</a>
+        <a class="nav-link <?= url_is('admin/pengembalian*') ? 'active' : '' ?>" href="<?= base_url('admin/pengembalian') ?>"><i class="bi bi-arrow-left-square"></i> Pengembalian</a>
     </div>
 
     <div class="main-wrapper">

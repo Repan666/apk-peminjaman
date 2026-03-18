@@ -121,8 +121,11 @@
         </a>
 
         <span class="menu-label">LAPORAN</span>
-        <a class="nav-link <?= url_is('petugas/laporan*') ? 'active' : '' ?>" href="<?= base_url('petugas/laporan') ?>">
-            <i class="bi bi-printer"></i> Cetak Laporan
+        <a class="nav-link <?= url_is('petugas/laporan/peminjaman*') ? 'active' : '' ?>" href="<?= base_url('petugas/laporan/peminjaman') ?>">
+            <i class="bi bi-file-earmark-text"></i> Laporan Peminjaman
+        </a>
+        <a class="nav-link <?= url_is('petugas/laporan/pengembalian*') ? 'active' : '' ?>" href="<?= base_url('petugas/laporan/pengembalian') ?>">
+            <i class="bi bi-file-earmark-check"></i> Laporan Pengembalian
         </a>
     </div>
 

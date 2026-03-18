@@ -6,13 +6,49 @@
         <h2 class="fw-bold text-slate-900 mb-1">Daftar Alat Praktikum</h2>
         <p class="text-muted small mb-0">Monitor ketersediaan dan kondisi alat secara real-time.</p>
     </div>
+    
     <div class="d-flex gap-2">
-        <div class="input-group shadow-sm rounded-pill overflow-hidden" style="width: 280px;">
-            <span class="input-group-text bg-white border-0 ps-3"><i class="bi bi-search text-muted"></i></span>
-            <input type="text" class="form-control border-0 ps-0 small" placeholder="Cari nama alat..." id="searchAlat">
-        </div>
+        <form action="<?= base_url('peminjam/alat') ?>" method="get" class="d-flex gap-2">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden border bg-white" style="width: 280px;">
+                <span class="input-group-text bg-white border-0 ps-3">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" 
+                       name="keyword" 
+                       class="form-control border-0 ps-0 small" 
+                       placeholder="Cari nama atau kode..." 
+                       value="<?= esc($keyword) ?>">
+                
+                <?php if ($keyword): ?>
+                    <a href="<?= base_url('peminjam/alat') ?>" class="btn bg-white border-0 text-muted px-3 d-flex align-items-center">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
+                <?php endif; ?>
+            </div>
+            <button type="submit" class="btn btn-emerald rounded-pill px-4 shadow-sm fw-bold">Cari</button>
+        </form>
     </div>
 </div>
+
+<?php if ($keyword): ?>
+    <div class="mb-3 animate__animated animate__fadeIn">
+        <span class="badge bg-emerald bg-opacity-10 text-emerald border border-emerald border-opacity-25 p-2 rounded-3">
+            <i class="bi bi-info-circle me-1"></i>
+            Menampilkan hasil untuk: <strong>"<?= esc($keyword) ?>"</strong>
+        </span>
+    </div>
+<?php endif; ?>
+
+<?php if (session()->getFlashdata('error')) : ?>
+    <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+        <div>
+            <div class="fw-bold">Gagal Mengajukan!</div>
+            <span class="small"><?= session()->getFlashdata('error') ?></span>
+        </div>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
 
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
     <div class="card-body p-0">
@@ -20,127 +56,146 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light text-muted small uppercase">
                     <tr>
-                        <th class="ps-4 py-3">Detail Alat</th>
-                        <th>Kategori</th>
-                        <th>Status Stok</th>
-                        <th>Kondisi Fisik</th>
-                        <th class="text-center">Aksi</th>
+                        <th class="ps-4 py-3" style="letter-spacing: 0.5px;">Detail Alat</th>
+                        <th style="letter-spacing: 0.5px;">Kategori</th>
+                        <th style="letter-spacing: 0.5px;">Status Stok</th>
+                        <th style="letter-spacing: 0.5px;">Kondisi</th>
+                        <th class="text-center" style="letter-spacing: 0.5px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($alat as $a): ?>
-                    <?php 
-                        // NORMALISASI DATA KONDISI (Biar sinkron Admin & Peminjam)
-                        // Mengubah "Rusak Ringan" atau "RUSAK_RINGAN" jadi "rusak_ringan"
-                        $kondisi_raw = strtolower(str_replace(' ', '_', $a['kondisi'])); 
-                    ?>
-                    <tr>
-                        <td class="ps-4 py-3">
-                            <div class="fw-bold text-slate-900"><?= $a['nama_alat'] ?></div>
-                            <small class="text-muted font-monospace"><?= $a['kode_alat'] ?></small>
-                        </td>
-                        <td>
-                            <span class="text-dark small"><i class="bi bi-tag me-1 text-muted"></i><?= $a['nama_kategori'] ?></span>
-                        </td>
-                        <td>
-                            <?php 
-                                if($a['stok'] <= 0) {
-                                    $sClass = 'text-danger'; $sIcon = 'bi-box-seam-fill'; $sText = 'Habis';
-                                } elseif($a['stok'] <= 5) {
-                                    $sClass = 'text-warning'; $sIcon = 'bi-box-seam'; $sText = 'Terbatas';
-                                } else {
-                                    $sClass = 'text-success'; $sIcon = 'bi-box-seam'; $sText = 'Tersedia';
-                                }
-                            ?>
-                            <div class="<?= $sClass ?> small fw-bold">
-                                <i class="bi <?= $sIcon ?> me-1"></i> <?= $a['stok'] ?> <span class="fw-normal text-muted">Unit (<?= $sText ?>)</span>
-                            </div>
-                        </td>
-                        <td>
-                            <?php 
-                                if($kondisi_raw == 'baik') {
-                                    echo '<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 small"><i class="bi bi-shield-check me-1"></i>Baik</span>';
-                                } elseif($kondisi_raw == 'rusak_ringan') {
-                                    echo '<span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-1 small"><i class="bi bi-shield-exclamation me-1"></i>Rusak Ringan</span>';
-                                } elseif($kondisi_raw == 'rusak_berat') {
-                                    echo '<span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-1 small"><i class="bi bi-shield-x me-1"></i>Rusak Berat</span>';
-                                } else {
-                                    echo '<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-1 small">'.ucwords($a['kondisi']).'</span>';
-                                }
-                            ?>
-                        </td>
-                        <td class="text-center pe-4">
-                            <?php 
-                                // TOMBOL AKTIF JIKA: Stok ada DAN kondisi bukan rusak berat
-                                if($a['stok'] > 0 && $kondisi_raw != 'rusak_berat'): 
-                            ?>
-                                <button class="btn btn-emerald btn-sm px-4 py-2 rounded-pill shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#pinjamModal<?= $a['id'] ?>">
-                                    Pinjam Alat
-                                </button>
-                            <?php else: ?>
-                                <button class="btn btn-light btn-sm px-4 py-2 rounded-pill text-muted border small fw-bold" disabled>
-                                    <i class="bi bi-lock-fill me-1"></i> Non-Aktif
-                                </button>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
+                    <?php if (empty($alat)): ?>
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="py-4">
+                                    <i class="bi bi-box-seam fs-1 opacity-25 d-block mb-3"></i>
+                                    <h5 class="text-muted fw-normal">Data alat tidak ditemukan</h5>
+                                    <a href="<?= base_url('peminjam/alat') ?>" class="btn btn-link text-emerald text-decoration-none">Refresh Halaman</a>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach($alat as $a): ?>
+                        <?php 
+                            $kondisi_raw = strtolower(str_replace(' ', '_', $a['kondisi'])); 
+                            $db = \Config\Database::connect();
+                            $peminjaman_aktif = $db->table('peminjaman')
+                                ->where('user_id', session()->get('user_id'))
+                                ->where('alat_id', $a['id'])
+                                ->whereIn('status', ['pending', 'dipinjam', 'menunggu_verifikasi'])
+                                ->get()->getRowArray();
+                        ?>
+                        <tr>
+                            <td class="ps-4 py-3">
+                                <div class="fw-bold text-slate-900 mb-0"><?= $a['nama_alat'] ?></div>
+                                <code class="text-muted small"><?= $a['kode_alat'] ?></code>
+                            </td>
+                            <td>
+                                <span class="text-dark small"><i class="bi bi-tag me-1 text-muted"></i><?= $a['nama_kategori'] ?></span>
+                            </td>
+                            <td>
+                                <?php 
+                                    $sClass = ($a['stok'] <= 0) ? 'text-danger' : (($a['stok'] <= 5) ? 'text-warning' : 'text-success');
+                                    $sIcon = ($a['stok'] <= 0) ? 'bi-box-seam-fill' : 'bi-box-seam';
+                                ?>
+                                <div class="<?= $sClass ?> small fw-bold"><i class="bi <?= $sIcon ?> me-1"></i> <?= $a['stok'] ?> Unit</div>
+                            </td>
+                            <td>
+                                <?php if($kondisi_raw == 'baik'): ?>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1">Baik</span>
+                                <?php elseif($kondisi_raw == 'rusak_ringan'): ?>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-1">Rusak Ringan</span>
+                                <?php else: ?>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-1">Rusak Berat</span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-center pe-4">
+                                <?php if($peminjaman_aktif): ?>
+                                    <button class="btn btn-secondary btn-sm px-3 py-2 rounded-pill opacity-75 fw-bold border-0" disabled>
+                                        <i class="bi bi-hourglass-split me-1"></i> <?= ($peminjaman_aktif['status'] == 'pending') ? 'Menunggu' : 'Aktif' ?>
+                                    </button>
+                                <?php elseif($a['stok'] > 0 && $kondisi_raw != 'rusak_berat'): ?>
+                                    <button class="btn btn-emerald btn-sm px-4 py-2 rounded-pill shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#pinjamModal<?= $a['id'] ?>">
+                                        Pinjam Alat
+                                    </button>
+                                <?php else: ?>
+                                    <span class="text-muted small fw-bold">Tidak Tersedia</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
 
-                    <div class="modal fade" id="pinjamModal<?= $a['id'] ?>" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
-                            <div class="modal-content border-0 shadow-lg rounded-4">
-                                <div class="modal-body p-4">
-                                    <div class="text-center mb-4">
-                                        <h5 class="fw-bold text-slate-900 mb-1">Form Peminjaman</h5>
-                                        <p class="text-muted small">Alat: <strong><?= $a['nama_alat'] ?></strong></p>
-                                    </div>
-                                    
-                                    <?php if($kondisi_raw == 'rusak_ringan'): ?>
-                                    <div class="alert alert-warning border-0 small rounded-3 mb-3 py-2">
-                                        <i class="bi bi-exclamation-circle-fill me-2"></i><strong>Perhatian:</strong> Alat ini dalam kondisi rusak ringan.
-                                    </div>
-                                    <?php endif; ?>
-
-                                    <form action="<?= base_url('peminjam/peminjaman/ajukan') ?>" method="post">
-                                        <?= csrf_field() ?>
-                                        <input type="hidden" name="alat_id" value="<?= $a['id'] ?>">
-                                        
-                                        <div class="mb-3">
-                                            <label class="form-label small fw-bold text-muted">Tanggal Pinjam</label>
-                                            <input type="date" name="tanggal_pinjam" class="form-control form-control-sm rounded-3 border-0 bg-light" value="<?= date('Y-m-d') ?>" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label small fw-bold text-muted">Rencana Kembali</label>
-                                            <input type="date" name="tanggal_kembali" class="form-control form-control-sm rounded-3 border-0 bg-light" required>
-                                        </div>
-
+                        <div class="modal fade" id="pinjamModal<?= $a['id'] ?>" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+                                <div class="modal-content border-0 shadow-lg rounded-4">
+                                    <div class="modal-body p-4 text-center">
                                         <div class="mb-4">
-                                            <label class="form-label small fw-bold text-muted">Keperluan</label>
-                                            <textarea name="keterangan" class="form-control form-control-sm rounded-3 border-0 bg-light" rows="2" placeholder="Tujuan peminjaman..."></textarea>
+                                            <div class="bg-emerald bg-opacity-10 text-emerald rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                                <i class="bi bi-file-earmark-text fs-3"></i>
+                                            </div>
+                                            <h5 class="fw-bold text-slate-900 mb-1">Form Peminjaman</h5>
+                                            <p class="text-muted small">Anda akan mengajukan peminjaman:<br><strong><?= $a['nama_alat'] ?></strong></p>
                                         </div>
+                                        
+                                        <form action="<?= base_url('peminjam/peminjaman/ajukan') ?>" method="post">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="alat_id" value="<?= $a['id'] ?>">
+                                            
+                                            <div class="mb-3 text-start">
+                                                <label class="form-label small fw-bold text-muted">Tanggal Pinjam</label>
+                                                <input type="date" name="tanggal_pinjam" id="tgl_pinjam_<?= $a['id'] ?>" class="form-control rounded-3 border-0 bg-light" value="<?= date('Y-m-d') ?>" min="<?= date('Y-m-d') ?>" onchange="updateTglKembali(<?= $a['id'] ?>)" required>
+                                            </div>
 
-                                        <div class="d-grid gap-2">
-                                            <button type="submit" class="btn btn-emerald py-2 rounded-pill fw-bold shadow-sm">Kirim Pengajuan</button>
-                                            <button type="button" class="btn btn-link text-muted text-decoration-none small" data-bs-dismiss="modal">Batalkan</button>
-                                        </div>
-                                    </form>
+                                            <div class="mb-3 text-start">
+                                                <label class="form-label small fw-bold text-muted">Rencana Kembali</label>
+                                                <input type="date" name="tanggal_kembali" id="tgl_kembali_<?= $a['id'] ?>" class="form-control rounded-3 border-0 bg-light" min="<?= date('Y-m-d') ?>" required>
+                                            </div>
+
+                                            <div class="mb-4 text-start">
+                                                <label class="form-label small fw-bold text-muted">Keperluan</label>
+                                                <textarea name="keterangan" class="form-control rounded-3 border-0 bg-light" rows="2" placeholder="Tujuan peminjaman..." required></textarea>
+                                            </div>
+
+                                            <div class="d-grid gap-2">
+                                                <button type="submit" class="btn btn-emerald py-2 rounded-pill fw-bold shadow-sm">Kirim Pengajuan</button>
+                                                <button type="button" class="btn btn-link text-muted text-decoration-none small" data-bs-dismiss="modal">Batalkan</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
+<script>
+    function updateTglKembali(id) {
+        const tglPinjam = document.getElementById('tgl_pinjam_' + id).value;
+        const inputKembali = document.getElementById('tgl_kembali_' + id);
+        inputKembali.min = tglPinjam;
+        if (inputKembali.value && inputKembali.value < tglPinjam) {
+            inputKembali.value = tglPinjam;
+        }
+    }
+</script>
+
 <style>
-    .btn-emerald { background-color: #10b981; color: white; border: none; transition: 0.3s; }
-    .btn-emerald:hover { background-color: #059669; color: white; transform: translateY(-2px); }
+    :root {
+        --emerald-500: #10b981;
+        --emerald-600: #059669;
+        --slate-900: #0f172a;
+    }
+    .btn-emerald { background-color: var(--emerald-500); color: white; border: none; transition: all 0.3s ease; }
+    .btn-emerald:hover { background-color: var(--emerald-600); color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
     .bg-light { background-color: #f8fafc !important; }
-    .text-slate-900 { color: #0f172a; }
-    .badge { letter-spacing: 0.3px; }
+    .text-slate-900 { color: var(--slate-900); }
+    .table thead th { font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
+    .form-control:focus { box-shadow: none; border: 1px solid var(--emerald-500) !important; background-color: #fff !important; }
+    .badge { font-weight: 600; }
 </style>
 
 <?= $this->endSection() ?>

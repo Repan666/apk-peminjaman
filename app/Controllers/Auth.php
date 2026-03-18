@@ -44,13 +44,24 @@ class Auth extends BaseController
             'logged_in' => true
         ]);
 
+        // ==========================
+        // LOG AKTIVITAS LOGIN
+        // ==========================
+        logAktivitas(
+            'Login Sistem',
+            $user['nama'] . ' berhasil login sebagai ' . $user['role']
+        );
+
         switch ($user['role']) {
             case 'admin':
                 return redirect()->to('/admin/dashboard');
+
             case 'petugas':
                 return redirect()->to('/petugas/dashboard');
+
             case 'peminjam':
                 return redirect()->to('/peminjam/dashboard');
+
             default:
                 return redirect()->to('/');
         }
@@ -58,7 +69,17 @@ class Auth extends BaseController
 
     public function logout()
     {
+
+        // ==========================
+        // LOG AKTIVITAS LOGOUT
+        // ==========================
+        logAktivitas(
+            'Logout Sistem',
+            session()->get('nama') . ' keluar dari sistem'
+        );
+
         session()->destroy();
+
         return redirect()->to('/');
     }
 }

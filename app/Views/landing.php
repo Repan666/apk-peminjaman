@@ -184,7 +184,7 @@
                         Pantau, pinjam, dan kelola inventaris alat dengan sistem otomatisasi tercanggih. Dibangun untuk transparansi dan akurasi data.
                     </p>
                     <div class="d-flex gap-3">
-                        <a href="#roles" class="btn btn-emerald btn-lg px-5">Mulai Sekarang</a>
+                        <a href="<?= base_url('login'); ?>" class="btn btn-emerald btn-lg px-5">Mulai Sekarang</a>
                         <a href="#" class="btn btn-outline-custom btn-lg">Dokumentasi</a>
                     </div>
                 </div>
@@ -239,7 +239,7 @@
                         <div class="icon-wrapper">
                             <i class="bi bi-qr-code-scan"></i>
                         </div>
-                        <h4 class="fw-bold mb-3">Peminjam / Siswa</h4>
+                        <h4 class="fw-bold mb-3">Peminjam</h4>
                         <p class="text-slate-600 leading-relaxed">
                             Kemudahan akses untuk melihat katalog alat, melakukan booking secara online, dan riwayat peminjaman.
                         </p>

@@ -40,6 +40,13 @@ class Kategori extends BaseController
             'status'        => 1
         ]);
 
+        // LOG AKTIVITAS
+        logAktivitas(
+            'Tambah Kategori',
+            'Admin menambahkan kategori: ' . $this->request->getPost('nama_kategori')
+        );
+
+
         return redirect()->to('/admin/kategori')
             ->with('success', 'Kategori berhasil ditambahkan');
     }
@@ -61,6 +68,12 @@ class Kategori extends BaseController
             'deskripsi'     => $this->request->getPost('deskripsi'),
         ]);
 
+        // LOG AKTIVITAS
+        logAktivitas(
+            'Update Kategori',
+            'Admin mengupdate kategori: ' . $this->request->getPost('nama_kategori')
+        );
+
         return redirect()->to('/admin/kategori')
             ->with('success', 'Kategori berhasil diupdate');
     }
@@ -71,6 +84,12 @@ class Kategori extends BaseController
             'status' => 0
         ]);
 
+        // LOG AKTIVITAS
+        logAktivitas(
+            'Nonaktifkan Kategori',
+            'Admin menonaktifkan kategori: ' . $this->kategoriModel->find($id)['nama_kategori']
+        );
+        
         return redirect()->to('/admin/kategori')
             ->with('success', 'Kategori dinonaktifkan');
     }

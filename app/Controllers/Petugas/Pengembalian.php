@@ -108,6 +108,14 @@ class Pengembalian extends BaseController
 
         $db->transComplete();
 
+        $namaPetugas = session()->get('nama') ?? 'Petugas';
+        $alat = $this->alatModel->find($peminjaman['alat_id']);
+
+        logAktivitas(
+            'Verifikasi Pengembalian',
+            'Petugas ' . $namaPetugas . ' memverifikasi pengembalian alat: ' . $alat['nama_alat'] . ' dengan denda: Rp' . number_format($denda, 0, ',', '.')
+        );
+
         return redirect()->to('/petugas/pengembalian')
         ->with('success','Pengembalian berhasil diverifikasi');
     }

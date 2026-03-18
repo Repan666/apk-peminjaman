@@ -45,14 +45,23 @@ class Alat extends BaseController
 
     public function store()
     {
+
+        $nama_alat = $this->request->getPost('nama_alat');
+
         $this->alatModel->save([
             'kode_alat'   => $this->request->getPost('kode_alat'),
-            'nama_alat'   => $this->request->getPost('nama_alat'),
+            'nama_alat'   => $nama_alat,
             'kategori_id' => $this->request->getPost('kategori_id'),
             'stok'        => $this->request->getPost('stok'),
             'kondisi'     => $this->request->getPost('kondisi'),
             'status'      => 1
         ]);
+
+        // LOG AKTIVITAS
+        logAktivitas(
+            'Tambah Alat',
+            'Admin menambahkan alat: ' . $nama_alat
+        );
 
         return redirect()->to('/admin/alat')
             ->with('success', 'Alat berhasil ditambahkan');
@@ -73,13 +82,22 @@ class Alat extends BaseController
 
     public function update($id)
     {
+
+        $nama_alat = $this->request->getPost('nama_alat');
+
         $this->alatModel->update($id, [
             'kode_alat'   => $this->request->getPost('kode_alat'),
-            'nama_alat'   => $this->request->getPost('nama_alat'),
+            'nama_alat'   => $nama_alat,
             'kategori_id' => $this->request->getPost('kategori_id'),
             'stok'        => $this->request->getPost('stok'),
             'kondisi'     => $this->request->getPost('kondisi'),
         ]);
+
+        // LOG AKTIVITAS
+        logAktivitas(
+            'Update Alat',
+            'Admin mengubah data alat: ' . $nama_alat
+        );
 
         return redirect()->to('/admin/alat')
             ->with('success', 'Alat berhasil diupdate');
@@ -87,7 +105,16 @@ class Alat extends BaseController
 
     public function nonaktif($id)
     {
+
+        $alat = $this->alatModel->find($id);
+
         $this->alatModel->update($id, ['status' => 0]);
+
+        // LOG AKTIVITAS
+        logAktivitas(
+            'Nonaktifkan Alat',
+            'Admin menonaktifkan alat: ' . $alat['nama_alat']
+        );
 
         return redirect()->to('/admin/alat')
             ->with('success', 'Alat dinonaktifkan');

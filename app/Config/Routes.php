@@ -37,6 +37,26 @@ $routes->group('admin', ['filter' => 'role:admin'], function($routes){
     $routes->post('alat/update/(:num)', 'Admin\Alat::update/$1');
     $routes->post('alat/nonaktif/(:num)', 'Admin\Alat::nonaktif/$1');
 
+    // PEMINJAMAN
+     $routes->get('peminjaman', 'Admin\Peminjaman::index');
+    $routes->get('peminjaman/create', 'Admin\Peminjaman::create');
+    $routes->post('peminjaman/store', 'Admin\Peminjaman::store');
+    $routes->get('peminjaman/detail/(:num)', 'Admin\Peminjaman::detail/$1');
+    $routes->get('peminjaman/edit/(:num)', 'Admin\Peminjaman::edit/$1');
+    $routes->post('peminjaman/update/(:num)', 'Admin\Peminjaman::update/$1');
+    $routes->get('peminjaman/approve/(:num)', 'Admin\Peminjaman::approve/$1');
+    $routes->get('peminjaman/reject/(:num)', 'Admin\Peminjaman::reject/$1');
+    $routes->get('peminjaman/cancel/(:num)', 'Admin\Peminjaman::cancel/$1');
+
+    // PENGEMBALIAN
+    $routes->get('pengembalian', 'Admin\Pengembalian::index');
+    $routes->get('pengembalian/detail/(:num)', 'Admin\Pengembalian::detail/$1');
+    $routes->get('pengembalian/edit/(:num)', 'Admin\Pengembalian::edit/$1');
+    $routes->post('pengembalian/update/(:num)', 'Admin\Pengembalian::update/$1');
+    
+    // Log Aktivitas
+    $routes->get('log-aktivitas', 'Admin\LogAktivitas::index');
+
 });
 
 $routes->group('petugas', ['filter' => 'role:petugas'], function($routes){
@@ -53,6 +73,9 @@ $routes->group('petugas', ['filter' => 'role:petugas'], function($routes){
     $routes->get('pengembalian', 'Petugas\Pengembalian::index');
     $routes->get('pengembalian/detail/(:num)', 'Petugas\Pengembalian::detail/$1');
     $routes->post('pengembalian/verifikasi/(:num)', 'Petugas\Pengembalian::verifikasi/$1');
+    // Laporan
+    $routes->get('laporan/peminjaman', 'Petugas\Laporan::peminjaman');
+    $routes->get('laporan/pengembalian', 'Petugas\Laporan::pengembalian');
 });
 
 $routes->group('peminjam', ['filter' => 'role:peminjam'], function($routes){

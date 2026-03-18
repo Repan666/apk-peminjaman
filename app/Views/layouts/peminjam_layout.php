@@ -115,7 +115,7 @@
         </a>
         
         <a class="nav-link <?= url_is('peminjam/alat*') ? 'active' : '' ?>" href="<?= base_url('peminjam/alat') ?>">
-            <i class="bi bi-tools"></i> Daftar Alat
+            <i class="bi bi-box-seam"></i> Daftar Alat
         </a>
         
         <span class="menu-label">AKTIVITAS PINJAM</span>

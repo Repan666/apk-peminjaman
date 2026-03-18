@@ -33,17 +33,36 @@ class User extends BaseController
     }
 
     public function store()
-    {
-        $this->userModel->save([
-            'nama'     => $this->request->getPost('nama'),
-            'username' => $this->request->getPost('username'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
-            'role'     => $this->request->getPost('role'),
-            'status'   => 1
-        ]);
+{
+    $rules = [
+        'nama' => 'required',
+        'username' => 'required|is_unique[users.username]',
+        'password' => 'required|min_length[6]',
+        'role' => 'required'
+    ];
 
-        return redirect()->to('/admin/users')->with('success', 'User berhasil ditambahkan');
+    if (!$this->validate($rules)) {
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Username sudah digunakan');
     }
+
+    $this->userModel->save([
+        'nama'     => $this->request->getPost('nama'),
+        'username' => $this->request->getPost('username'),
+        'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
+        'role'     => $this->request->getPost('role'),
+        'status'   => 1
+    ]);
+
+    logAktivitas(
+        'Tambah User',
+        'Admin menambahkan user: ' . $this->request->getPost('username')
+    );
+
+    return redirect()->to('/admin/users')
+        ->with('success', 'User berhasil ditambahkan');
+}
 
     public function edit($id)
 {
@@ -63,22 +82,40 @@ class User extends BaseController
     return view('admin/users/edit', $data);
 }
 
-    public function update($id)
-    {
-        $data = [
-            'nama'     => $this->request->getPost('nama'),
-            'username' => $this->request->getPost('username'),
-            'role'     => $this->request->getPost('role'),
-        ];
+   public function update($id)
+{
+    $rules = [
+        'nama' => 'required',
+        'username' => "required|is_unique[users.username,id,$id]",
+        'role' => 'required'
+    ];
 
-        if ($this->request->getPost('password')) {
-            $data['password'] = password_hash($this->request->getPost('password'), PASSWORD_BCRYPT);
-        }
-
-        $this->userModel->update($id, $data);
-
-        return redirect()->to('/admin/users')->with('success', 'User berhasil diupdate');
+    if (!$this->validate($rules)) {
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Username sudah digunakan');
     }
+
+    $data = [
+        'nama'     => $this->request->getPost('nama'),
+        'username' => $this->request->getPost('username'),
+        'role'     => $this->request->getPost('role'),
+    ];
+
+    if ($this->request->getPost('password')) {
+        $data['password'] = password_hash($this->request->getPost('password'), PASSWORD_BCRYPT);
+    }
+
+    $this->userModel->update($id, $data);
+
+    logAktivitas(
+        'Update User',
+        'Admin mengupdate user: ' . $this->request->getPost('username')
+    );
+
+    return redirect()->to('/admin/users')
+        ->with('success', 'User berhasil diupdate');
+}
 
     public function nonaktif($id)
 {
@@ -90,6 +127,11 @@ class User extends BaseController
     }
 
     $this->userModel->update($id, ['status' => 0]);
+    // LOG AKTIVITAS
+    logAktivitas(
+        'Nonaktifkan User',
+        'Admin menonaktifkan user: ' . $user['username']
+    );
 
     return redirect()->to('/admin/users')
         ->with('success', 'User dinonaktifkan');

@@ -99,7 +99,7 @@
             <ul class="list-unstyled small mb-0">
                 <li class="mb-3 d-flex">
                     <i class="bi bi-1-circle me-2 text-success"></i>
-                    <span>Pastikan stok fisik alat di laboratorium mencukupi.</span>
+                    <span>Pastikan stok fisik alat di penyimpanan mencukupi.</span>
                 </li>
                 <li class="mb-3 d-flex">
                     <i class="bi bi-2-circle me-2 text-success"></i>
@@ -107,7 +107,7 @@
                 </li>
                 <li class="d-flex">
                     <i class="bi bi-3-circle me-2 text-success"></i>
-                    <span>Setelah klik "Setujui", siswa dapat mengambil alat di meja petugas.</span>
+                    <span>Setelah klik "Setujui", peminjam dapat mengambil alat di meja petugas.</span>
                 </li>
             </ul>
         </div>
