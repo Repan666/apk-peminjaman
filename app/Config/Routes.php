@@ -56,6 +56,9 @@ $routes->group('admin', ['filter' => 'role:admin'], function($routes){
     
     // Log Aktivitas
     $routes->get('log-aktivitas', 'Admin\LogAktivitas::index');
+    // Pengaturan
+    $routes->get('settings', 'Admin\Setting::index');
+    $routes->post('settings/update', 'Admin\Setting::update');
 
 });
 

@@ -168,8 +168,8 @@ class Peminjaman extends BaseController
         // ======================
         // SELESAI TIDAK BOLEH DIUBAH
         // ======================
-        if($statusLama == 'selesai'){
-            return redirect()->back()->with('error','Transaksi sudah selesai');
+        if(in_array($statusLama, ['menunggu_verifikasi','selesai'])){
+            return redirect()->back()->with('error','Transaksi sudah masuk proses pengembalian / selesai');
         }
 
         $this->peminjamanModel->update($id,[

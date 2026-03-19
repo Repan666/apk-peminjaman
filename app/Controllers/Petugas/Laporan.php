@@ -20,12 +20,25 @@ class Laporan extends BaseController
     // LAPORAN PEMINJAMAN
     // ==========================
     public function peminjaman()
-    {
+{
+    $tanggal_awal  = $this->request->getGet('tanggal_awal');
+    $tanggal_akhir = $this->request->getGet('tanggal_akhir');
 
-        $tanggal_awal  = $this->request->getGet('tanggal_awal');
-        $tanggal_akhir = $this->request->getGet('tanggal_akhir');
+    $db = \Config\Database::connect();
 
-        $builder = $this->peminjamanModel
+    // Kalau ada filter tanggal → pakai procedure
+    if ($tanggal_awal && $tanggal_akhir) {
+
+        $query = $db->query("CALL laporan_peminjaman(?, ?)", [
+            $tanggal_awal,
+            $tanggal_akhir
+        ]);
+
+        $data['laporan'] = $query->getResult();
+
+    } else {
+        // fallback (biar tetap jalan kalau tidak filter)
+        $data['laporan'] = $this->peminjamanModel
             ->select('
                 peminjaman.id,
                 users.nama AS nama_peminjam,
@@ -35,17 +48,13 @@ class Laporan extends BaseController
                 peminjaman.status
             ')
             ->join('users','users.id = peminjaman.user_id')
-            ->join('alat','alat.id = peminjaman.alat_id');
-
-        if($tanggal_awal && $tanggal_akhir){
-            $builder->where('peminjaman.tanggal_pinjam >=',$tanggal_awal);
-            $builder->where('peminjaman.tanggal_pinjam <=',$tanggal_akhir);
-        }
-
-        $data['laporan'] = $builder->orderBy('peminjaman.id','DESC')->findAll();
-
-        return view('petugas/laporan/peminjaman',$data);
+            ->join('alat','alat.id = peminjaman.alat_id')
+            ->orderBy('peminjaman.id','DESC')
+            ->findAll();
     }
+
+    return view('petugas/laporan/peminjaman', $data);
+}
 
 
 
@@ -53,12 +62,24 @@ class Laporan extends BaseController
     // LAPORAN PENGEMBALIAN
     // ==========================
     public function pengembalian()
-    {
+{
+    $tanggal_awal  = $this->request->getGet('tanggal_awal');
+    $tanggal_akhir = $this->request->getGet('tanggal_akhir');
 
-        $tanggal_awal  = $this->request->getGet('tanggal_awal');
-        $tanggal_akhir = $this->request->getGet('tanggal_akhir');
+    $db = \Config\Database::connect();
 
-        $builder = $this->peminjamanModel
+    if ($tanggal_awal && $tanggal_akhir) {
+
+        $query = $db->query("CALL laporan_pengembalian(?, ?)", [
+            $tanggal_awal,
+            $tanggal_akhir
+        ]);
+
+        $data['laporan'] = $query->getResult();
+
+    } else {
+        // fallback
+        $data['laporan'] = $this->peminjamanModel
             ->select('
                 peminjaman.id,
                 users.nama AS nama_peminjam,
@@ -71,15 +92,11 @@ class Laporan extends BaseController
             ')
             ->join('users','users.id = peminjaman.user_id')
             ->join('alat','alat.id = peminjaman.alat_id')
-            ->where('peminjaman.status','selesai');
-
-        if($tanggal_awal && $tanggal_akhir){
-            $builder->where('peminjaman.tanggal_dikembalikan >=',$tanggal_awal);
-            $builder->where('peminjaman.tanggal_dikembalikan <=',$tanggal_akhir);
-        }
-
-        $data['laporan'] = $builder->orderBy('peminjaman.id','DESC')->findAll();
-
-        return view('petugas/laporan/pengembalian',$data);
+            ->where('peminjaman.status','selesai')
+            ->orderBy('peminjaman.id','DESC')
+            ->findAll();
     }
+
+    return view('petugas/laporan/pengembalian', $data);
+}
 }

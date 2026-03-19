@@ -47,7 +47,7 @@
                         <h6 class="fw-bold mb-1 <?= ($selisih > 0) ? 'text-danger' : 'text-success' ?>">
                             <?= ($selisih > 0) ? 'Terlambat ' . $selisih . ' Hari' : 'Kembali Tepat Waktu' ?>
                         </h6>
-                        <small class="text-muted">Tarif Denda: Rp 5.000 / Hari</small>
+                        <small class="text-muted">Tarif Denda: Rp <?= number_format($tarif, 0, ',', '.') ?> / Hari</small>
                     </div>
                     <div class="text-end">
                         <label class="small d-block text-muted">Total Denda</label>

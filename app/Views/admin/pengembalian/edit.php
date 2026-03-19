@@ -85,7 +85,7 @@
                     <h6 class="small fw-bold text-uppercase mb-3"><i class="bi bi-calculator me-2"></i>Prediksi Denda</h6>
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="small opacity-75">Tarif Denda / Hari</span>
-                        <span class="fw-bold">Rp 5.000</span>
+                        <span class="fw-bold">Rp <?= number_format($tarif, 0, ',', '.') ?></span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="small opacity-75">Denda Saat Ini</span>

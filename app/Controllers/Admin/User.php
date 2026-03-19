@@ -34,19 +34,44 @@ class User extends BaseController
 
     public function store()
 {
+    // Definisi Rules & Custom Error Messages agar UI/UX lebih informatif
     $rules = [
-        'nama' => 'required',
-        'username' => 'required|is_unique[users.username]',
-        'password' => 'required|min_length[6]',
-        'role' => 'required'
+        'nama' => [
+            'rules'  => 'required',
+            'errors' => [
+                'required' => 'Nama lengkap harus diisi.'
+            ]
+        ],
+        'username' => [
+            'rules'  => 'required|is_unique[users.username]|min_length[4]',
+            'errors' => [
+                'required'   => 'Username tidak boleh kosong.',
+                'is_unique'  => 'Username "@' . $this->request->getPost('username') . '" sudah terdaftar.',
+                'min_length' => 'Username minimal 4 karakter.'
+            ]
+        ],
+        'password' => [
+            'rules'  => 'required|min_length[6]',
+            'errors' => [
+                'required'   => 'Password tidak boleh kosong.',
+                'min_length' => 'Password terlalu pendek, minimal 6 karakter.'
+            ]
+        ],
+        'role' => [
+            'rules'  => 'required',
+            'errors' => [
+                'required' => 'Pilih salah satu hak akses (role).'
+            ]
+        ]
     ];
 
     if (!$this->validate($rules)) {
         return redirect()->back()
             ->withInput()
-            ->with('error', 'Username sudah digunakan');
+            ->with('errors', $this->validator->getErrors()); // Kirim SEMUA error ke view
     }
 
+    // Logika Simpan (Tetap Sama)
     $this->userModel->save([
         'nama'     => $this->request->getPost('nama'),
         'username' => $this->request->getPost('username'),
@@ -61,7 +86,7 @@ class User extends BaseController
     );
 
     return redirect()->to('/admin/users')
-        ->with('success', 'User berhasil ditambahkan');
+        ->with('success', 'User @' . $this->request->getPost('username') . ' berhasil ditambahkan');
 }
 
     public function edit($id)
@@ -84,16 +109,38 @@ class User extends BaseController
 
    public function update($id)
 {
+    // Validasi dasar
     $rules = [
-        'nama' => 'required',
-        'username' => "required|is_unique[users.username,id,$id]",
-        'role' => 'required'
+        'nama' => [
+            'rules'  => 'required',
+            'errors' => ['required' => 'Nama lengkap tidak boleh kosong.']
+        ],
+        'username' => [
+            'rules'  => "required|is_unique[users.username,id,$id]|min_length[4]",
+            'errors' => [
+                'required'   => 'Username wajib diisi.',
+                'is_unique'  => 'Username sudah digunakan user lain.',
+                'min_length' => 'Username minimal 4 karakter.'
+            ]
+        ],
+        'role' => [
+            'rules'  => 'required',
+            'errors' => ['required' => 'Pilih hak akses user.']
+        ]
     ];
+
+    // Jika input password diisi, tambahkan rule validasi password
+    if ($this->request->getPost('password')) {
+        $rules['password'] = [
+            'rules'  => 'min_length[6]',
+            'errors' => ['min_length' => 'Password baru minimal harus 6 karakter.']
+        ];
+    }
 
     if (!$this->validate($rules)) {
         return redirect()->back()
             ->withInput()
-            ->with('error', 'Username sudah digunakan');
+            ->with('errors', $this->validator->getErrors());
     }
 
     $data = [
@@ -102,6 +149,7 @@ class User extends BaseController
         'role'     => $this->request->getPost('role'),
     ];
 
+    // Masukkan password ke array update hanya jika diisi
     if ($this->request->getPost('password')) {
         $data['password'] = password_hash($this->request->getPost('password'), PASSWORD_BCRYPT);
     }
@@ -110,11 +158,11 @@ class User extends BaseController
 
     logAktivitas(
         'Update User',
-        'Admin mengupdate user: ' . $this->request->getPost('username')
+        'Admin mengupdate data user: ' . $this->request->getPost('username')
     );
 
     return redirect()->to('/admin/users')
-        ->with('success', 'User berhasil diupdate');
+        ->with('success', 'Data user berhasil diperbarui');
 }
 
     public function nonaktif($id)

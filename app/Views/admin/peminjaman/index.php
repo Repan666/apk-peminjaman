@@ -33,7 +33,7 @@
                         <td class="ps-4 text-muted small"><?= $no++ ?></td>
                         <td>
                             <div class="fw-bold text-slate-900"><?= $p['nama'] ?></div>
-                            <small class="text-muted">User ID: #<?= $p['user_id'] ?? 'N/A' ?></small>
+                            
                         </td>
                         <td>
                             <div class="text-dark fw-medium"><?= $p['nama_alat'] ?></div>
@@ -50,6 +50,7 @@
                                 $statusMap = [
                                     'pending' => ['bg-warning', 'Pending', 'bi-hourglass-split'],
                                     'dipinjam' => ['bg-success', 'Dipinjam', 'bi-arrow-repeat'],
+                                    'menunggu_verifikasi' => ['bg-info', 'Menunggu Verifikasi', 'bi-clock-history'], // ✅ TAMBAH INI
                                     'ditolak' => ['bg-danger', 'Ditolak', 'bi-x-circle'],
                                     'selesai' => ['bg-primary', 'Selesai', 'bi-check2-all']
                                 ];

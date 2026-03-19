@@ -61,6 +61,10 @@
                             <input type="text" class="form-control border-0 bg-secondary bg-opacity-10 text-secondary fw-bold rounded-3" value="DIBATALKAN (Status Final)" readonly>
                             <input type="hidden" name="status" value="dibatalkan">
 
+                             <?php elseif($peminjaman['status'] == 'menunggu_verifikasi'): ?>
+                            <input type="text" class="form-control border-0 bg-secondary bg-opacity-10 text-secondary fw-bold rounded-3" value="MENUNGGU VERIFIKASI (Diproses di menu Pengembalian)" readonly>
+                            <input type="hidden" name="status" value="menunggu_verifikasi">
+
                         <?php else: ?>
                             <select name="status" class="form-select border-0 bg-light rounded-3 fw-bold text-emerald">
                                 <?php if($peminjaman['status'] == 'pending'): ?>

@@ -18,6 +18,31 @@ class Alat extends BaseController
         helper(['form']);
     }
 
+    // ==============================
+    // AUTO GENERATE KODE ALAT
+    // ==============================
+    private function generateKodeAlat()
+    {
+        $last = $this->alatModel
+            ->select('kode_alat')
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if (!$last) {
+            return 'ALT-001';
+        }
+
+        // Ambil angka dari kode terakhir
+        $lastNumber = (int) substr($last['kode_alat'], 4);
+
+        $newNumber = $lastNumber + 1;
+
+        return 'ALT-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    // ==============================
+    // LIST DATA
+    // ==============================
     public function index()
     {
         $data = [
@@ -31,6 +56,9 @@ class Alat extends BaseController
         return view('admin/alat/index', $data);
     }
 
+    // ==============================
+    // FORM CREATE
+    // ==============================
     public function create()
     {
         $data = [
@@ -43,13 +71,18 @@ class Alat extends BaseController
         return view('admin/alat/create', $data);
     }
 
+    // ==============================
+    // STORE DATA
+    // ==============================
     public function store()
     {
-
         $nama_alat = $this->request->getPost('nama_alat');
 
+        // ✅ AUTO GENERATE KODE
+        $kode = $this->generateKodeAlat();
+
         $this->alatModel->save([
-            'kode_alat'   => $this->request->getPost('kode_alat'),
+            'kode_alat'   => $kode,
             'nama_alat'   => $nama_alat,
             'kategori_id' => $this->request->getPost('kategori_id'),
             'stok'        => $this->request->getPost('stok'),
@@ -57,16 +90,19 @@ class Alat extends BaseController
             'status'      => 1
         ]);
 
-        // LOG AKTIVITAS
+        // LOG
         logAktivitas(
             'Tambah Alat',
-            'Admin menambahkan alat: ' . $nama_alat
+            'Admin menambahkan alat: ' . $nama_alat . ' (' . $kode . ')'
         );
 
         return redirect()->to('/admin/alat')
-            ->with('success', 'Alat berhasil ditambahkan');
+            ->with('success', 'Alat berhasil ditambahkan dengan kode ' . $kode);
     }
 
+    // ==============================
+    // FORM EDIT
+    // ==============================
     public function edit($id)
     {
         $data = [
@@ -80,20 +116,22 @@ class Alat extends BaseController
         return view('admin/alat/edit', $data);
     }
 
+    // ==============================
+    // UPDATE DATA
+    // ==============================
     public function update($id)
     {
-
         $nama_alat = $this->request->getPost('nama_alat');
 
+        // ❗ kode_alat TIDAK DIUBAH (biar konsisten)
         $this->alatModel->update($id, [
-            'kode_alat'   => $this->request->getPost('kode_alat'),
             'nama_alat'   => $nama_alat,
             'kategori_id' => $this->request->getPost('kategori_id'),
             'stok'        => $this->request->getPost('stok'),
             'kondisi'     => $this->request->getPost('kondisi'),
         ]);
 
-        // LOG AKTIVITAS
+        // LOG
         logAktivitas(
             'Update Alat',
             'Admin mengubah data alat: ' . $nama_alat
@@ -103,14 +141,16 @@ class Alat extends BaseController
             ->with('success', 'Alat berhasil diupdate');
     }
 
+    // ==============================
+    // NONAKTIFKAN
+    // ==============================
     public function nonaktif($id)
     {
-
         $alat = $this->alatModel->find($id);
 
         $this->alatModel->update($id, ['status' => 0]);
 
-        // LOG AKTIVITAS
+        // LOG
         logAktivitas(
             'Nonaktifkan Alat',
             'Admin menonaktifkan alat: ' . $alat['nama_alat']

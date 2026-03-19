@@ -5,69 +5,153 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\PeminjamanModel;
 use App\Models\AlatModel;
+use App\Models\SettingModel;
 
 class Pengembalian extends BaseController
 {
 
     protected $peminjamanModel;
     protected $alatModel;
+    protected $settingModel;
 
     public function __construct()
     {
         $this->peminjamanModel = new PeminjamanModel();
         $this->alatModel = new AlatModel();
+        $this->settingModel = new SettingModel();
     }
 
     // ==============================
     // LIST DATA
     // ==============================
     public function index()
-    {
+{
+    $db = \Config\Database::connect();
 
-        $data['pengembalian'] = $this->peminjamanModel
-            ->select('peminjaman.*, users.nama, alat.nama_alat')
-            ->join('users','users.id = peminjaman.user_id')
-            ->join('alat','alat.id = peminjaman.alat_id')
-            ->whereIn('peminjaman.status',['menunggu_verifikasi','selesai'])
-            ->orderBy('peminjaman.id','DESC')
-            ->findAll();
+    $pengembalian = $this->peminjamanModel
+        ->select('peminjaman.*, users.nama, alat.nama_alat')
+        ->join('users','users.id = peminjaman.user_id')
+        ->join('alat','alat.id = peminjaman.alat_id')
+        ->whereIn('peminjaman.status',['menunggu_verifikasi','selesai'])
+        ->orderBy('peminjaman.id','DESC')
+        ->findAll();
 
-        return view('admin/pengembalian/index',$data);
+    // ✅ HITUNG DENDA VIA FUNCTION
+    foreach ($pengembalian as &$row) {
+        if ($row['tanggal_dikembalikan']) {
+
+            $query = $db->query("
+                SELECT hitung_denda(?, ?) AS denda
+            ", [
+                $row['tanggal_kembali'],
+                $row['tanggal_dikembalikan']
+            ]);
+
+            $result = $query->getRowArray();
+
+            $row['denda'] = $result['denda'];
+        } else {
+            $row['denda'] = 0;
+        }
     }
+
+    $data['pengembalian'] = $pengembalian;
+
+    return view('admin/pengembalian/index',$data);
+}
 
 
     // ==============================
     // DETAIL
     // ==============================
     public function detail($id)
-    {
+{
+    $db = \Config\Database::connect();
 
-        $data['peminjaman'] = $this->peminjamanModel
-            ->select('peminjaman.*, users.nama, alat.nama_alat')
-            ->join('users','users.id = peminjaman.user_id')
-            ->join('alat','alat.id = peminjaman.alat_id')
-            ->where('peminjaman.id',$id)
-            ->first();
+    $peminjaman = $this->peminjamanModel
+        ->select('peminjaman.*, users.nama, alat.nama_alat')
+        ->join('users','users.id = peminjaman.user_id')
+        ->join('alat','alat.id = peminjaman.alat_id')
+        ->where('peminjaman.id',$id)
+        ->first();
 
-        return view('admin/pengembalian/detail',$data);
+    if(!$peminjaman){
+        return redirect()->back()->with('error','Data tidak ditemukan');
     }
+
+    // ✅ HITUNG DENDA VIA FUNCTION
+    if ($peminjaman['tanggal_dikembalikan']) {
+
+        $query = $db->query("
+            SELECT hitung_denda(?, ?) AS denda
+        ", [
+            $peminjaman['tanggal_kembali'],
+            $peminjaman['tanggal_dikembalikan']
+        ]);
+
+        $result = $query->getRowArray();
+
+        $denda = $result['denda'];
+    } else {
+        $denda = 0;
+    }
+
+    $selisih = floor($denda / 5000);
+
+    $peminjaman['denda'] = $denda;
+    $data['peminjaman'] = $peminjaman;
+    $data['selisih'] = $selisih;
+
+    return view('admin/pengembalian/detail',$data);
+}
 
 
     // ==============================
     // EDIT
     // ==============================
     public function edit($id)
-    {
+{
+    $db = \Config\Database::connect();
 
-        $data['peminjaman'] = $this->peminjamanModel
-            ->select('peminjaman.*, users.nama, alat.nama_alat')
-            ->join('users','users.id = peminjaman.user_id')
-            ->join('alat','alat.id = peminjaman.alat_id')
-            ->where('peminjaman.id',$id)
-            ->first();
+    // Ambil data peminjaman + relasi
+    $peminjaman = $this->peminjamanModel
+        ->select('peminjaman.*, users.nama, alat.nama_alat')
+        ->join('users','users.id = peminjaman.user_id')
+        ->join('alat','alat.id = peminjaman.alat_id')
+        ->where('peminjaman.id',$id)
+        ->first();
 
-        return view('admin/pengembalian/edit',$data);
+    if (!$peminjaman) {
+        return redirect()->back()->with('error', 'Data tidak ditemukan');
     }
+
+    // ✅ Ambil tarif dari settings (DINAMIS)
+    $tarif = $this->settingModel->getValue('denda_per_hari') ?? 0;
+
+    // ✅ Hitung denda real-time pakai FUNCTION DB
+    if ($peminjaman['tanggal_dikembalikan']) {
+
+        $query = $db->query("
+            SELECT hitung_denda(?, ?) AS denda
+        ", [
+            $peminjaman['tanggal_kembali'],
+            $peminjaman['tanggal_dikembalikan']
+        ]);
+
+        $result = $query->getRowArray();
+        $denda = $result['denda'];
+
+    } else {
+        $denda = 0;
+    }
+
+    $peminjaman['denda'] = $denda;
+
+    return view('admin/pengembalian/edit', [
+        'peminjaman' => $peminjaman,
+        'tarif'      => $tarif
+    ]);
+}
 
 
 
@@ -75,72 +159,42 @@ class Pengembalian extends BaseController
     // UPDATE PENGEMBALIAN
     // ==============================
     public function update($id)
-    {
+{
+    $db = \Config\Database::connect();
+    $db->transStart();
 
-        $db = \Config\Database::connect();
-        $db->transStart();
+    $peminjaman = $this->peminjamanModel->find($id);
 
-        $peminjaman = $this->peminjamanModel->find($id);
+    $tanggalDikembalikan = $this->request->getPost('tanggal_dikembalikan');
+    $statusBaru = $this->request->getPost('status');
+    $keterangan = $this->request->getPost('keterangan');
 
-        $tanggalDikembalikan = $this->request->getPost('tanggal_dikembalikan');
-        $statusBaru = $this->request->getPost('status');
-        $keterangan = $this->request->getPost('keterangan');
+    // ❌ HAPUS HITUNG DENDA
+    // ❌ HAPUS UPDATE STOK
 
-        $tanggalKembali = $peminjaman['tanggal_kembali'];
+    $this->peminjamanModel->update($id,[
 
-        // =========================
-        // HITUNG SELISIH HARI
-        // =========================
+        'tanggal_dikembalikan' => $tanggalDikembalikan,
+        'status' => $statusBaru,
+        'keterangan' => $keterangan
 
-        $tgl1 = new \DateTime($tanggalKembali);
-        $tgl2 = new \DateTime($tanggalDikembalikan);
+    ]);
 
-        $selisih = $tgl2->diff($tgl1)->days;
+    $db->transComplete();
 
-        if($tgl2 <= $tgl1){
-            $denda = 0;
-        }else{
-            $denda = $selisih * 5000;
-        }
+    $user = db_connect()->table('users')
+        ->where('id', $peminjaman['user_id'])
+        ->get()
+        ->getRowArray();
 
-        // =========================
-        // JIKA STATUS DIUBAH KE SELESAI
-        // =========================
+    $alat = $this->alatModel->find($peminjaman['alat_id']);
 
-        if($peminjaman['status'] == 'menunggu_verifikasi' && $statusBaru == 'selesai'){
-
-            $alat = $this->alatModel->find($peminjaman['alat_id']);
-
-            // tambah stok alat
-            $this->alatModel->update($alat['id'],[
-                'stok' => $alat['stok'] + 1
-            ]);
-        }
-
-        $this->peminjamanModel->update($id,[
-
-            'tanggal_dikembalikan' => $tanggalDikembalikan,
-            'denda' => $denda,
-            'status' => $statusBaru,
-            'keterangan' => $keterangan
-
-        ]);
-
-        $db->transComplete();
-
-        $user = db_connect()->table('users')
-            ->where('id', $peminjaman['user_id'])
-            ->get()
-            ->getRowArray();
-
-        $alat = $this->alatModel->find($peminjaman['alat_id']);
-
-        logAktivitas(
-            'Verifikasi Pengembalian',
-            'Admin memverifikasi pengembalian alat: '.$alat['nama_alat'].' dari '.$user['nama'].' dengan denda Rp'.$denda
-        );
-        
-        return redirect()->to('/admin/pengembalian')
-            ->with('success','Pengembalian berhasil diverifikasi');
-    }
+    logAktivitas(
+        'Verifikasi Pengembalian',
+        'Admin memverifikasi pengembalian alat: '.$alat['nama_alat'].' dari '.$user['nama']
+    );
+    
+    return redirect()->to('/admin/pengembalian')
+        ->with('success','Pengembalian berhasil diverifikasi');
+}
 }
