@@ -33,90 +33,81 @@ class Pengembalian extends BaseController
 
     // DETAIL PENGEMBALIAN
     public function detail($id)
-    {
-        $peminjaman = $this->peminjamanModel
-            ->select('peminjaman.*, users.nama as nama_user, alat.nama_alat, alat.kode_alat')
-            ->join('users','users.id = peminjaman.user_id')
-            ->join('alat','alat.id = peminjaman.alat_id')
-            ->where('peminjaman.id',$id)
-            ->first();
+{
+    $db = \Config\Database::connect();
 
-        if(!$peminjaman){
-            return redirect()->back()->with('error','Data tidak ditemukan');
-        }
+    $peminjaman = $this->peminjamanModel
+        ->select('peminjaman.*, users.nama as nama_user, alat.nama_alat, alat.kode_alat')
+        ->join('users','users.id = peminjaman.user_id')
+        ->join('alat','alat.id = peminjaman.alat_id')
+        ->where('peminjaman.id',$id)
+        ->first();
 
-        // hitung selisih hari
-        $tgl_kembali = strtotime($peminjaman['tanggal_kembali']);
-        $tgl_dikembalikan = strtotime($peminjaman['tanggal_dikembalikan']);
-
-        $selisih = floor(($tgl_dikembalikan - $tgl_kembali) / 86400);
-
-        if($selisih < 0){
-            $selisih = 0;
-        }
-
-        // hitung estimasi denda
-        $denda = $selisih * 5000;
-
-        $data['peminjaman'] = $peminjaman;
-        $data['selisih'] = $selisih;
-        $data['denda'] = $denda;
-
-        return view('petugas/pengembalian/detail',$data);
+    if(!$peminjaman){
+        return redirect()->back()->with('error','Data tidak ditemukan');
     }
+
+    // ✅ ambil tarif dari settings
+    $settingModel = new \App\Models\SettingModel();
+    $tarif = $settingModel->getValue('denda_per_hari') ?? 0;
+
+    // ✅ hitung denda dari function DB
+    if ($peminjaman['tanggal_dikembalikan']) {
+        $query = $db->query("
+            SELECT hitung_denda(?, ?) AS denda
+        ", [
+            $peminjaman['tanggal_kembali'],
+            $peminjaman['tanggal_dikembalikan']
+        ]);
+
+        $result = $query->getRowArray();
+        $denda = $result['denda'];
+    } else {
+        $denda = 0;
+    }
+
+    // ✅ hitung selisih dinamis (jangan hardcode 5000)
+    $selisih = $tarif > 0 ? floor($denda / $tarif) : 0;
+
+    return view('petugas/pengembalian/detail', [
+        'peminjaman' => $peminjaman,
+        'denda'      => $denda,
+        'selisih'    => $selisih,
+        'tarif'      => $tarif
+    ]);
+}
 
     // VERIFIKASI PENGEMBALIAN
     public function verifikasi($id)
-    {
-        $db = \Config\Database::connect();
-        $db->transStart();
+{
+    $db = \Config\Database::connect();
+    $db->transStart();
 
-        $peminjaman = $this->peminjamanModel->find($id);
+    $peminjaman = $this->peminjamanModel->find($id);
 
-        if(!$peminjaman){
-            return redirect()->back()->with('error','Data tidak ditemukan');
-        }
-
-        if($peminjaman['status'] != 'menunggu_verifikasi'){
-            return redirect()->back()->with('error','Status tidak valid');
-        }
-
-        // hitung denda
-        $tgl_kembali = strtotime($peminjaman['tanggal_kembali']);
-        $tgl_dikembalikan = strtotime($peminjaman['tanggal_dikembalikan']);
-
-        $selisih = floor(($tgl_dikembalikan - $tgl_kembali) / 86400);
-
-        $denda = 0;
-
-        if($selisih > 0){
-            $denda = $selisih * 5000;
-        }
-
-        // tambah stok alat
-        $alat = $this->alatModel->find($peminjaman['alat_id']);
-
-        $this->alatModel->update($alat['id'],[
-            'stok' => $alat['stok'] + 1
-        ]);
-
-        // update peminjaman
-        $this->peminjamanModel->update($id,[
-            'status' => 'selesai',
-            'denda' => $denda
-        ]);
-
-        $db->transComplete();
-
-        $namaPetugas = session()->get('nama') ?? 'Petugas';
-        $alat = $this->alatModel->find($peminjaman['alat_id']);
-
-        logAktivitas(
-            'Verifikasi Pengembalian',
-            'Petugas ' . $namaPetugas . ' memverifikasi pengembalian alat: ' . $alat['nama_alat'] . ' dengan denda: Rp' . number_format($denda, 0, ',', '.')
-        );
-
-        return redirect()->to('/petugas/pengembalian')
-        ->with('success','Pengembalian berhasil diverifikasi');
+    if(!$peminjaman){
+        return redirect()->back()->with('error','Data tidak ditemukan');
     }
+
+    if($peminjaman['status'] != 'menunggu_verifikasi'){
+        return redirect()->back()->with('error','Status tidak valid');
+    }
+
+    // ✅ CUMA UPDATE STATUS
+    $this->peminjamanModel->update($id,[
+        'status' => 'selesai'
+    ]);
+
+    $db->transComplete();
+
+    $namaPetugas = session()->get('nama') ?? 'Petugas';
+
+    logAktivitas(
+        'Verifikasi Pengembalian',
+        'Petugas ' . $namaPetugas . ' memverifikasi pengembalian alat'
+    );
+
+    return redirect()->to('/petugas/pengembalian')
+        ->with('success','Pengembalian berhasil diverifikasi');
+}
 }

@@ -29,13 +29,22 @@
         </form>
     </div>
 </div>
-
-<?php if ($keyword): ?>
-    <div class="mb-3 animate__animated animate__fadeIn">
-        <span class="badge bg-emerald bg-opacity-10 text-emerald border border-emerald border-opacity-25 p-2 rounded-3">
-            <i class="bi bi-info-circle me-1"></i>
-            Menampilkan hasil untuk: <strong>"<?= esc($keyword) ?>"</strong>
-        </span>
+<?php if (!empty($keyword)): ?>
+    <div class="mb-4 animate__animated animate__fadeIn">
+        <div class="d-inline-flex align-items-center bg-white border border-emerald border-opacity-50 px-3 py-2 rounded-3 shadow-sm">
+            <div class="bg-emerald bg-opacity-10 p-2 rounded-2 me-3">
+                <i class="bi bi-search text-emerald"></i>
+            </div>
+            <div>
+                <span class="text-muted small d-block" style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Hasil Pencarian</span>
+                <span class="text-slate-900 fw-bold">
+                    "<?= esc($keyword) ?>"
+                </span>
+                <a href="<?= base_url('peminjam/alat') ?>" class="ms-2 text-danger small text-decoration-none" title="Bersihkan Pencarian">
+                    <i class="bi bi-x-circle-fill"></i>
+                </a>
+            </div>
+        </div>
     </div>
 <?php endif; ?>
 

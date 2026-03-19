@@ -31,7 +31,7 @@
                     <tr>
                         <td class="ps-4">
                             <div class="fw-bold text-slate-900 small"><?= $p['nama_user'] ?></div>
-                            <span class="text-muted" style="font-size: 0.7rem;">ID Transaksi: #<?= $p['id'] ?></span>
+                            
                         </td>
                         <td>
                             <div class="fw-bold text-dark small"><?= $p['nama_alat'] ?></div>

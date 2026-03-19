@@ -143,7 +143,10 @@
         <a class="nav-link <?= url_is('admin/log-aktivitas*') ? 'active' : '' ?>" href="<?= base_url('admin/log-aktivitas') ?>">
             <i class="bi bi-journal-text"></i> Log Aktivitas
         </a>
-        
+        <a class="nav-link <?= url_is('admin/settings*') ? 'active' : '' ?>" href="<?= base_url('admin/settings') ?>">
+            <i class="bi bi-gear-fill"></i> Pengaturan Sistem
+        </a>
+
         <span class="menu-label">INVENTARIS</span>
         <a class="nav-link <?= url_is('admin/kategori*') ? 'active' : '' ?>" href="<?= base_url('admin/kategori') ?>">
             <i class="bi bi-tags-fill"></i> Kategori Alat
