@@ -16,14 +16,35 @@ class User extends BaseController
     }
 
     public function index()
-    {
-        $data = [
-            'title' => 'Kelola User',
-            'users' => $this->userModel->findAll()
-        ];
+{
+    $keyword = $this->request->getGet('keyword');
+    $status  = $this->request->getGet('status'); // filter tambahan
 
-        return view('admin/users/index', $data);
+    $query = $this->userModel;
+
+    // FILTER STATUS (optional)
+    if ($status !== null && $status !== '') {
+        $query = $query->where('status', $status);
     }
+
+    // SEARCH
+    if ($keyword) {
+        $query = $query
+            ->groupStart()
+                ->like('nama', $keyword)
+                ->orLike('username', $keyword)
+            ->groupEnd();
+    }
+
+    $data = [
+        'title'   => 'Kelola User',
+        'users'   => $query->orderBy('id', 'DESC')->findAll(),
+        'keyword' => $keyword,
+        'status'  => $status
+    ];
+
+    return view('admin/users/index', $data);
+}
 
     public function create()
     {
@@ -34,7 +55,7 @@ class User extends BaseController
 
     public function store()
 {
-    // Definisi Rules & Custom Error Messages agar UI/UX lebih informatif
+    // Definisi Rules 
     $rules = [
         'nama' => [
             'rules'  => 'required',
@@ -62,6 +83,20 @@ class User extends BaseController
             'errors' => [
                 'required' => 'Pilih salah satu hak akses (role).'
             ]
+        ],
+        'no_hp' => [
+            'rules' => 'required|numeric|min_length[10]',
+            'errors' => [
+                'required' => 'No HP wajib diisi.',
+                'numeric' => 'No HP harus berupa angka.',
+                'min_length' => 'No HP minimal 10 digit.'
+            ]
+        ],
+        'alamat' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'Alamat wajib diisi.'
+            ]
         ]
     ];
 
@@ -71,14 +106,16 @@ class User extends BaseController
             ->with('errors', $this->validator->getErrors()); // Kirim SEMUA error ke view
     }
 
-    // Logika Simpan (Tetap Sama)
+    // Logika Simpan 
     $this->userModel->save([
-        'nama'     => $this->request->getPost('nama'),
-        'username' => $this->request->getPost('username'),
-        'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
-        'role'     => $this->request->getPost('role'),
-        'status'   => 1
-    ]);
+    'nama'     => $this->request->getPost('nama'),
+    'username' => $this->request->getPost('username'),
+    'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
+    'role'     => $this->request->getPost('role'),
+    'no_hp'    => $this->request->getPost('no_hp'),   // ✅ baru
+    'alamat'   => $this->request->getPost('alamat'),  // ✅ baru
+    'status'   => 1
+]);
 
     logAktivitas(
         'Tambah User',
@@ -126,7 +163,21 @@ class User extends BaseController
         'role' => [
             'rules'  => 'required',
             'errors' => ['required' => 'Pilih hak akses user.']
+        ],
+        'no_hp' => [
+        'rules' => 'required|numeric|min_length[10]',
+        'errors' => [
+            'required' => 'No HP wajib diisi.',
+            'numeric' => 'No HP harus angka.',
+            'min_length' => 'Minimal 10 digit.'
         ]
+    ],
+    'alamat' => [
+        'rules' => 'required',
+        'errors' => [
+            'required' => 'Alamat tidak boleh kosong.'
+        ]
+    ]
     ];
 
     // Jika input password diisi, tambahkan rule validasi password
@@ -143,10 +194,12 @@ class User extends BaseController
             ->with('errors', $this->validator->getErrors());
     }
 
-    $data = [
-        'nama'     => $this->request->getPost('nama'),
-        'username' => $this->request->getPost('username'),
-        'role'     => $this->request->getPost('role'),
+   $data = [
+    'nama'     => $this->request->getPost('nama'),
+    'username' => $this->request->getPost('username'),
+    'role'     => $this->request->getPost('role'),
+    'no_hp'    => $this->request->getPost('no_hp'),   // ✅
+    'alamat'   => $this->request->getPost('alamat'),  // ✅
     ];
 
     // Masukkan password ke array update hanya jika diisi

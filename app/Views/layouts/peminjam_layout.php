@@ -99,15 +99,25 @@
             .sidebar { transform: translateX(-100%); }
             .main-wrapper { margin-left: 0; }
         }
+         .sidebar img {
+            max-height: 90px; /* Sesuaikan angka ini: 40px - 50px biasanya paling pas */
+            transition: transform 0.3s ease;
+        }
+
+        /* Opsional: Efek halus saat sidebar di-hover */
+        .sidebar:hover img {
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="d-flex align-items-center mb-4 px-2">
-            <i class="bi bi-stack text-success fs-3 me-2"></i>
-            <span class="fs-4 fw-bold text-white">APK<span class="text-success">LOAN</span></span>
-        </div>
+   <div class="sidebar">
+    <div class="d-flex align-items-center mb-4 ps-2">
+        <img src="<?= base_url('assets/img/Logo Projek UKK.png') ?>" 
+             alt="Logo APKLOAN" 
+             style="height: 90px; width: auto; object-fit: contain; margin-right: 12px;">
+    </div>
         
         <span class="menu-label">MENU UTAMA</span>
         <a class="nav-link <?= url_is('peminjam/dashboard*') ? 'active' : '' ?>" href="<?= base_url('peminjam/dashboard') ?>">

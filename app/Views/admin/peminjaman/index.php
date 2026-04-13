@@ -32,9 +32,20 @@
                     <tr>
                         <td class="ps-4 text-muted small"><?= $no++ ?></td>
                         <td>
-                            <div class="fw-bold text-slate-900"><?= $p['nama'] ?></div>
-                            
-                        </td>
+                        <div class="fw-bold text-slate-900 mb-1"><?= $p['nama'] ?></div>
+                        <div class="small text-muted">
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="bi bi-whatsapp text-success me-2" style="font-size: 0.8rem;"></i>
+                                <span><?= $p['no_hp'] ?? '-' ?></span>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-geo-alt text-emerald me-2" style="font-size: 0.8rem; margin-top: 3px;"></i>
+                                <span class="text-truncate" style="max-width: 180px;" title="<?= esc($p['alamat'] ?? '') ?>">
+                                    <?= $p['alamat'] ?? 'No Alamat' ?>
+                                </span>
+                            </div>
+                        </div>
+                    </td>
                         <td>
                             <div class="text-dark fw-medium"><?= $p['nama_alat'] ?></div>
                             <span class="badge bg-secondary bg-opacity-10 text-secondary border-0 rounded-pill px-2 py-0 small" style="font-size: 0.7rem;">

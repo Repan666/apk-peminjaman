@@ -80,6 +80,6 @@ class Auth extends BaseController
 
         session()->destroy();
 
-        return redirect()->to('/');
+        return redirect()->to('/login');
     }
 }

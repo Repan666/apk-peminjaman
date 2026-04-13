@@ -28,11 +28,11 @@ class Peminjaman extends BaseController
         $data['title'] = 'Kelola Peminjaman';
 
         $data['peminjaman'] = $this->peminjamanModel
-            ->select('peminjaman.*, users.nama, alat.nama_alat')
-            ->join('users','users.id = peminjaman.user_id')
-            ->join('alat','alat.id = peminjaman.alat_id')
-            ->orderBy('peminjaman.id','DESC')
-            ->findAll();
+        ->select('peminjaman.*, users.nama, users.no_hp, users.alamat, alat.nama_alat')
+        ->join('users','users.id = peminjaman.user_id')
+        ->join('alat','alat.id = peminjaman.alat_id')
+        ->orderBy('peminjaman.id','DESC')
+        ->findAll();
 
         return view('admin/peminjaman/index',$data);
     }
@@ -55,61 +55,95 @@ class Peminjaman extends BaseController
     // =========================
     // FORM CREATE
     // =========================
-    public function create()
-    {
-        $data['users'] = $this->userModel
-            ->where('role','peminjam')
-            ->findAll();
+    // ... di dalam class Peminjaman
+public function create()
+{
+    $data['users'] = $this->userModel->where('role','peminjam')->where('status', 1)->findAll();
+    $data['alat'] = $this->alatModel->where('status',1)->findAll();
+    
+    // AMBIL DATA PEMINJAMAN AKTIF UNTUK VALIDASI DI VIEW
+    $data['peminjaman_aktif'] = $this->peminjamanModel
+        ->whereIn('status', ['pending', 'dipinjam', 'menunggu_verifikasi'])
+        ->findAll();
 
-        $data['alat'] = $this->alatModel
-            ->where('status',1)
-            ->findAll();
-
-        return view('admin/peminjaman/create',$data);
-    }
+    return view('admin/peminjaman/create', $data);
+}
 
     // =========================
     // STORE
     // =========================
     public function store()
-    {
-        $alatId = $this->request->getPost('alat_id');
-        $status = $this->request->getPost('status');
+{
+    $alatId = $this->request->getPost('alat_id');
+    $status = $this->request->getPost('status');
 
-        $alat = $this->alatModel->find($alatId);
+    $alat = $this->alatModel->find($alatId);
 
-        if($status == 'dipinjam'){
-            if($alat['stok'] <= 0){
-                return redirect()->back()->with('error','Stok alat habis');
-            }
+    // =========================
+    // VALIDASI BISNIS RULE
+    // =========================
 
-            // kurangi stok
-            $this->alatModel->update($alatId,[
-                'stok' => $alat['stok'] - 1
-            ]);
+    // ❌ CEK KONDISI ALAT
+    if(strtolower(str_replace(' ', '_', $alat['kondisi'])) == 'rusak_berat'){
+        return redirect()->back()->with('error','Alat tidak dapat dipinjam karena rusak berat');
+    }
+
+    // ❌ CEK PINJAMAN AKTIF USER
+    $cek = $this->peminjamanModel
+        ->where('user_id', $this->request->getPost('user_id'))
+        ->where('alat_id', $alatId)
+        ->whereIn('status', ['pending','dipinjam','menunggu_verifikasi'])
+        ->first();
+
+    if($cek){
+
+        // 🔥 PESAN SESUAI STATUS
+        if($cek['status'] == 'pending'){
+            $pesan = 'User masih memiliki pengajuan yang sedang menunggu persetujuan';
+        } elseif($cek['status'] == 'dipinjam'){
+            $pesan = 'User masih meminjam alat ini (belum dikembalikan)';
+        } elseif($cek['status'] == 'menunggu_verifikasi'){
+            $pesan = 'User sedang dalam proses pengembalian (menunggu verifikasi)';
+        } else {
+            $pesan = 'User masih memiliki peminjaman aktif untuk alat ini';
         }
 
-        $this->peminjamanModel->insert([
-            'user_id' => $this->request->getPost('user_id'),
-            'alat_id' => $alatId,
-            'tanggal_pinjam' => $this->request->getPost('tanggal_pinjam'),
-            'tanggal_kembali' => $this->request->getPost('tanggal_kembali'),
-            'status' => $status,
-            'keterangan' => $this->request->getPost('keterangan')
-        ]);
-
-        // LOG AKTIVITAS
-        $user = $this->userModel->find($this->request->getPost('user_id'));
-
-        logAktivitas(
-            'Tambah Peminjaman',
-            'Admin membuat peminjaman alat: '.$alat['nama_alat'].' untuk '.$user['nama']
-        );
-      
-
-        return redirect()->to('/admin/peminjaman')
-            ->with('success','Peminjaman berhasil dibuat');
+        return redirect()->back()->with('error', $pesan);
     }
+
+    // ❌ CEK STOK JIKA LANGSUNG DIPINJAM
+    if($status == 'dipinjam'){
+        if($alat['stok'] <= 0){
+            return redirect()->back()->with('error','Stok alat habis');
+        }
+
+        // kurangi stok
+        $this->alatModel->update($alatId,[
+            'stok' => $alat['stok'] - 1
+        ]);
+    }
+
+    // ✅ INSERT DATA
+    $this->peminjamanModel->insert([
+        'user_id' => $this->request->getPost('user_id'),
+        'alat_id' => $alatId,
+        'tanggal_pinjam' => $this->request->getPost('tanggal_pinjam'),
+        'tanggal_kembali' => $this->request->getPost('tanggal_kembali'),
+        'status' => $status,
+        'keterangan' => $this->request->getPost('keterangan')
+    ]);
+
+    // LOG AKTIVITAS
+    $user = $this->userModel->find($this->request->getPost('user_id'));
+
+    logAktivitas(
+        'Tambah Peminjaman',
+        'Admin membuat peminjaman alat: '.$alat['nama_alat'].' untuk '.$user['nama']
+    );
+
+    return redirect()->to('/admin/peminjaman')
+        ->with('success','Peminjaman berhasil dibuat');
+}
 
     // =========================
     // EDIT

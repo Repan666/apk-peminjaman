@@ -77,7 +77,7 @@
                 <ol class="ps-3 mb-0">
                     <li class="mb-2">Mengecek kelengkapan fisik alat sesuai kode <b><?= $peminjaman['kode_alat'] ?></b>.</li>
                     <li class="mb-2">Memastikan tidak ada kerusakan baru pada alat.</li>
-                    <li class="mb-2">Jika ada denda sebesar <b>Rp <?= number_format($denda, 0, ',', '.') ?></b>, pastikan peminjam sudah melunasi secara tunai/prosedur sekolah.</li>
+                    <li class="mb-2">Jika ada denda sebesar <b>Rp <?= number_format($denda, 0, ',', '.') ?></b>, pastikan peminjam sudah melunasi.</li>
                     <li class="mb-0">Setelah tombol diklik, stok alat akan otomatis bertambah kembali ke sistem.</li>
                 </ol>
             </div>

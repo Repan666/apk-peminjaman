@@ -29,12 +29,18 @@ class Pengembalian extends BaseController
     $db = \Config\Database::connect();
 
     $pengembalian = $this->peminjamanModel
-        ->select('peminjaman.*, users.nama, alat.nama_alat')
-        ->join('users','users.id = peminjaman.user_id')
-        ->join('alat','alat.id = peminjaman.alat_id')
-        ->whereIn('peminjaman.status',['menunggu_verifikasi','selesai'])
-        ->orderBy('peminjaman.id','DESC')
-        ->findAll();
+    ->select('
+        peminjaman.*,
+        users.nama,
+        users.no_hp,
+        users.alamat,
+        alat.nama_alat
+    ')
+    ->join('users','users.id = peminjaman.user_id')
+    ->join('alat','alat.id = peminjaman.alat_id')
+    ->whereIn('peminjaman.status',['menunggu_verifikasi','selesai'])
+    ->orderBy('peminjaman.id','DESC')
+    ->findAll();
 
     // ✅ HITUNG DENDA VIA FUNCTION
     foreach ($pengembalian as &$row) {

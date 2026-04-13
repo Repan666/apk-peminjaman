@@ -93,6 +93,7 @@
                                 ->where('alat_id', $a['id'])
                                 ->whereIn('status', ['pending', 'dipinjam', 'menunggu_verifikasi'])
                                 ->get()->getRowArray();
+                                $isRusakBerat = ($kondisi_raw == 'rusak_berat');
                         ?>
                         <tr>
                             <td class="ps-4 py-3">
@@ -123,12 +124,16 @@
                                     <button class="btn btn-secondary btn-sm px-3 py-2 rounded-pill opacity-75 fw-bold border-0" disabled>
                                         <i class="bi bi-hourglass-split me-1"></i> <?= ($peminjaman_aktif['status'] == 'pending') ? 'Menunggu' : 'Aktif' ?>
                                     </button>
-                                <?php elseif($a['stok'] > 0 && $kondisi_raw != 'rusak_berat'): ?>
+                                <?php elseif($a['stok'] > 0 && !$isRusakBerat): ?>
                                     <button class="btn btn-emerald btn-sm px-4 py-2 rounded-pill shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#pinjamModal<?= $a['id'] ?>">
                                         Pinjam Alat
                                     </button>
                                 <?php else: ?>
-                                    <span class="text-muted small fw-bold">Tidak Tersedia</span>
+                                    <?php if($isRusakBerat): ?>
+                                    <span class="text-danger small fw-bold">Rusak Berat</span>
+                                <?php else: ?>
+                                    <span class="text-muted small fw-bold">Stok Habis</span>
+                                <?php endif; ?>
                                 <?php endif; ?>
                             </td>
                         </tr>
