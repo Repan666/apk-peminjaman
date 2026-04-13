@@ -72,16 +72,23 @@
                         <?php foreach($users as $u): ?>
                         <tr>
                             <td class="ps-4 py-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle me-3 bg-emerald bg-opacity-10 text-emerald fw-bold d-flex align-items-center justify-content-center">
-                                        <?= strtoupper(substr($u['nama'], 0, 1)) ?>
-                                    </div>
-                                    <div>
-                                        <div class="fw-bold text-slate-900"><?= $u['nama'] ?></div>
-                                        <div class="text-muted small">@<?= $u['username'] ?></div>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle me-3 bg-emerald bg-opacity-10 text-emerald fw-bold d-flex align-items-center justify-content-center">
+                                    <?= strtoupper(substr($u['nama'], 0, 1)) ?>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-slate-900"><?= $u['nama'] ?></div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-muted small">@<?= $u['username'] ?></span>
+                                        <span class="text-slate-300">|</span>
+                                        <span class="text-muted small text-truncate" style="max-width: 150px;" title="<?= esc($u['alamat']) ?>">
+                                            <i class="bi bi-geo-alt-fill text-emerald opacity-50"></i> 
+                                            <?= $u['alamat'] ? substr($u['alamat'], 0, 20) . '...' : 'Alamat belum diisi' ?>
+                                        </span>
                                     </div>
                                 </div>
-                            </td>
+                            </div>
+                        </td>
                             <td>
                                 <?php 
                                     $roleColor = 'secondary';

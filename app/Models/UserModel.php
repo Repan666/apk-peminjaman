@@ -13,6 +13,8 @@ class UserModel extends Model
         'username',
         'password',
         'role',
-        'status'
+        'status',
+        'no_hp',
+        'alamat'
     ];
 }

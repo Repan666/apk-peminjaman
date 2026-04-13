@@ -38,7 +38,7 @@
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label small fw-bold text-muted">Tanggal Kembali</label>
-                            <?php if(!in_array($peminjaman['status'], ['selesai', 'ditolak', 'dibatalkan'])): ?>
+                            <?php if(!in_array($peminjaman['status'], ['selesai', 'ditolak', 'dibatalkan', 'menunggu_verifikasi'])): ?>
                                 <input type="date" name="tanggal_kembali" value="<?= $peminjaman['tanggal_kembali'] ?>" class="form-control border-0 bg-light rounded-3" min="<?= $peminjaman['tanggal_pinjam'] ?>">
                             <?php else: ?>
                                 <input type="date" class="form-control border-0 bg-light rounded-3 opacity-75" value="<?= $peminjaman['tanggal_kembali'] ?>" disabled>
@@ -81,7 +81,21 @@
 
                     <div class="mb-4">
                         <label class="form-label small fw-bold text-muted">Keterangan / Catatan Admin</label>
-                        <textarea name="keterangan" class="form-control border-0 bg-light rounded-3" rows="3"><?= trim($peminjaman['keterangan']) ?></textarea>
+                        <?php if(in_array($peminjaman['status'], ['menunggu_verifikasi','selesai','ditolak','dibatalkan'])): ?>
+
+                            <textarea class="form-control border-0 bg-light rounded-3 opacity-75" rows="3" disabled>
+                                <?= trim($peminjaman['keterangan']) ?>
+                            </textarea>
+
+                            <input type="hidden" name="keterangan" value="<?= $peminjaman['keterangan'] ?>">
+
+                        <?php else: ?>
+
+                            <textarea name="keterangan" class="form-control border-0 bg-light rounded-3" rows="3">
+                                <?= trim($peminjaman['keterangan']) ?>
+                            </textarea>
+
+                        <?php endif; ?>
                     </div>
 
                     <div class="d-grid gap-2">

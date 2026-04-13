@@ -6,11 +6,6 @@
         <h2 class="fw-bold text-slate-900">Manajemen Pengembalian</h2>
         <p class="text-muted small">Verifikasi pengembalian alat, hitung denda otomatis, dan pantau histori log.</p>
     </div>
-    <div class="d-flex gap-2">
-        <button class="btn btn-light border rounded-pill px-3 shadow-sm">
-            <i class="bi bi-download me-2"></i> Export Report
-        </button>
-    </div>
 </div>
 
 <div class="row mb-4">
@@ -58,9 +53,20 @@
                     <tr>
                         <td class="ps-4 fw-medium text-slate-500"><?= $no++ ?></td>
                         <td>
-                            <div class="fw-bold text-slate-900"><?= $row['nama'] ?></div>
-                          
-                        </td>
+                        <div class="fw-bold text-slate-900 mb-1"><?= $row['nama'] ?></div>
+                        <div class="small text-muted">
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="bi bi-whatsapp text-success me-2" style="font-size: 0.8rem;"></i>
+                                <span><?= $row['no_hp'] ?? '-' ?></span>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-geo-alt text-emerald me-2" style="font-size: 0.8rem; margin-top: 3px;"></i>
+                                <span class="text-truncate" style="max-width: 150px;" title="<?= esc($row['alamat'] ?? '') ?>">
+                                    <?= $row['alamat'] ?? 'N/A' ?>
+                                </span>
+                            </div>
+                        </div>
+                    </td>
                         <td>
                             <span class="badge bg-light text-dark fw-medium border"><?= $row['nama_alat'] ?></span>
                         </td>

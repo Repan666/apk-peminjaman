@@ -147,30 +147,64 @@
             .hero-title { font-size: 2.5rem; }
             .d-flex.gap-3 { justify-content: center; }
         }
+        /* Styling container logo supaya presisi */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+/* Biar logo ada efek sedikit glow kalau hover, biar makin premium */
+.logo-container:hover {
+    transform: scale(1.05);
+}
+
+/* Sesuaikan font navbar biar selaras sama brand */
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+.navbar {
+    padding-top: 0.5rem !important;    /* Atur padding atas */
+    padding-bottom: 0.5rem !important; /* Atur padding bawah */
+}
+
+/* Memastikan container logo tidak mendorong terlalu jauh */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-3">
-        <div class="container">
-            <a class="navbar-brand" href="<?= base_url(); ?>">
-                <i class="bi bi-stack text-success me-2"></i>APK<span class="text-success">LOAN</span>
-            </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="bi bi-list fs-1"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link px-3" href="#roles">Hak Akses</a></li>
-                    <li class="nav-item ms-lg-4">
-                        <a class="btn btn-emerald px-4" href="<?= base_url('login'); ?>">
-                            Portal Login <i class="bi bi-arrow-right-short"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-2">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="<?= base_url(); ?>">
+    <div class="logo-container me-2">
+        <img src="<?= base_url('assets/img/logo projek ukk.png') ?>" 
+             alt="Logo APKLOAN" 
+             class="img-fluid"
+             style="height: 90px; width: auto; object-fit: contain;">
+    </div>
+</a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="bi bi-list fs-1"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link px-3" href="#roles">Hak Akses</a></li>
+                <li class="nav-item ms-lg-4">
+                    <a class="btn btn-emerald px-4" href="<?= base_url('login'); ?>">
+                        Portal Login <i class="bi bi-arrow-right-short"></i>
+                    </a>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <section class="hero-section">
         <div class="container text-center text-lg-start">
