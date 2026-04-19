@@ -6,7 +6,7 @@
 <div class="row align-items-center mb-4 g-3">
     <div class="col-12 col-md-6">
         <h2 class="fw-bold text-slate-900 mb-1">Kelola User</h2>
-        <p class="text-muted small mb-0">Manajemen hak akses dan data pengguna sistem APKLOAN.</p>
+        <p class="text-muted small mb-0">Manajemen hak akses dan data pengguna sistem Loaan.Q.</p>
     </div>
     <div class="col-12 col-md-6">
         <div class="d-flex gap-2 justify-content-md-end">

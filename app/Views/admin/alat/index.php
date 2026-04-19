@@ -81,7 +81,7 @@
                                       onsubmit="return confirm('Nonaktifkan alat ini?')">
                                     <?= csrf_field(); ?>
                                     <button class="btn btn-sm btn-white border shadow-sm text-danger" title="Nonaktifkan">
-                                        <i class="bi bi-trash3"></i> </button>
+                                        <i class="bi bi-trash3"></i>
                                 </form>
                                 <?php endif; ?>
                             </div>

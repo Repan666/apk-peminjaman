@@ -139,7 +139,7 @@
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
-                <a href="/admin/log_aktivitas" class="btn btn-emerald w-100 rounded-3 mt-2 small shadow-sm">Buka Log Audit</a>
+                <a href="log-aktivitas" class="btn btn-emerald w-100 rounded-3 mt-2 small shadow-sm">Buka Log Audit</a>
             </div>
         </div>
     </div>

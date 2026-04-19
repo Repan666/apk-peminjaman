@@ -7,9 +7,14 @@
         <p class="text-muted small mb-0">Rekapitulasi alat yang sudah kembali, durasi, dan status denda.</p>
     </div>
     <div class="d-flex gap-2 d-print-none">
-        <button onclick="window.print()" class="btn btn-emerald rounded-pill px-4 shadow-sm">
-            <i class="bi bi-printer me-2"></i>Cetak Laporan
-        </button>
+        <a href="<?= base_url('petugas/laporan/pengembalian/pdf') . '?' . http_build_query(request()->getGet()) ?>" 
+            class="btn btn-danger rounded-pill px-4 shadow-sm">
+            <i class="bi bi-file-earmark-pdf me-2"></i>Export PDF
+        </a>
+        <a href="<?= base_url('petugas/laporan/pengembalian/excel') . '?' . http_build_query(request()->getGet()) ?>" 
+        class="btn btn-success rounded-pill px-4 shadow-sm">
+    <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
+        </a>
     </div>
 </div>
 

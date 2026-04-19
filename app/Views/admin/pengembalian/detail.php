@@ -84,9 +84,6 @@
             </div>
             <div class="card-footer bg-white border-0 p-4">
                 <div class="d-flex justify-content-end gap-2">
-                    <button onclick="window.print()" class="btn btn-outline-secondary px-4 rounded-pill fw-bold btn-sm">
-                        <i class="bi bi-printer me-1"></i> Cetak Audit
-                    </button>
                     <a href="/admin/pengembalian/edit/<?= $peminjaman['id'] ?>" class="btn btn-emerald px-4 rounded-pill fw-bold btn-sm shadow-sm">
                         <i class="bi bi-pencil-square me-1"></i> Ubah Data
                     </a>

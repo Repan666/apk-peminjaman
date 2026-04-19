@@ -16,6 +16,7 @@
                         <th>Informasi Alat</th>
                         <th>Waktu Peminjaman</th>
                         <th>Batas Kembali</th>
+                        <th>Denda</th>
                         <th>Status</th>
                         <th class="text-center">Aksi</th>
                     </tr>
@@ -56,6 +57,20 @@
                                 <?php endif; ?>
                             </div>
                         </td>
+                        <td>
+                        <?php if($p['telat_hari'] > 0): ?>
+                            <div class="text-danger fw-bold small">
+                                Rp <?= number_format($p['denda'], 0, ',', '.') ?>
+                            </div>
+                            <div class="text-muted small">
+                                Terlambat <?= $p['telat_hari'] ?> hari
+                            </div>
+                        <?php else: ?>
+                            <span class="text-success small fw-bold">
+                                Tidak ada denda
+                            </span>
+                        <?php endif; ?>
+                    </td>
                         <td>
                             <span class="badge bg-emerald bg-opacity-10 text-emerald rounded-pill px-3 py-1 small">
                                 <i class="bi bi-arrow-repeat me-1"></i> <?= ucwords($p['status']) ?>

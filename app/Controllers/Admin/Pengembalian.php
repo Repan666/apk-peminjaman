@@ -203,4 +203,72 @@ class Pengembalian extends BaseController
     return redirect()->to('/admin/pengembalian')
         ->with('success','Pengembalian berhasil diverifikasi');
 }
+public function create()
+{
+    $users = db_connect()->table('users')
+        ->where('role', 'peminjam')
+        ->where('status', 1) // hanya user aktif
+        ->get()
+        ->getResultArray();
+
+    return view('admin/pengembalian/create', [
+        'users' => $users
+    ]);
+}
+public function getPinjamanByUser($userId)
+{
+    $user = db_connect()->table('users')
+    ->where('id', $userId)
+    ->where('status', 1)
+    ->get()
+    ->getRow();
+
+    if(!$user){
+        return $this->response->setJSON([]);
+    }
+
+    $data = $this->peminjamanModel
+        ->select('peminjaman.id, alat.nama_alat, peminjaman.tanggal_kembali')
+        ->join('alat','alat.id = peminjaman.alat_id')
+        ->where('peminjaman.user_id', $userId)
+        ->where('peminjaman.status', 'dipinjam')
+        ->findAll();
+
+    return $this->response->setJSON($data);
+}
+public function store()
+{
+    $id = $this->request->getPost('peminjaman_id');
+
+    $peminjaman = $this->peminjamanModel->find($id);
+
+    // ❌ VALIDASI DATA ADA
+    if(!$peminjaman){
+        return redirect()->back()->with('error','Data peminjaman tidak ditemukan');
+    }
+
+    // ❌ VALIDASI USER MASIH AKTIF
+    $user = db_connect()->table('users')
+        ->where('id', $peminjaman['user_id'])
+        ->get()
+        ->getRowArray();
+
+    if(!$user || $user['status'] != 1){
+        return redirect()->back()->with('error','User tidak aktif / tidak valid');
+    }
+
+    // ❌ VALIDASI STATUS HARUS DIPINJAM
+    if($peminjaman['status'] != 'dipinjam'){
+        return redirect()->back()->with('error','Hanya bisa mengembalikan status dipinjam');
+    }
+
+    // ✅ UPDATE
+    $this->peminjamanModel->update($id, [
+        'status' => 'menunggu_verifikasi',
+        'tanggal_dikembalikan' => date('Y-m-d')
+    ]);
+
+    return redirect()->to('/admin/pengembalian')
+        ->with('success','Pengembalian manual berhasil diajukan');
+}
 }

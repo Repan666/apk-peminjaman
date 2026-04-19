@@ -117,6 +117,37 @@ public function aktif()
         ->where('peminjaman.status','dipinjam')
         ->findAll();
 
+    // =========================
+    // AMBIL DENDA DARI DB (DINAMIS)
+    // =========================
+    $db = \Config\Database::connect();
+
+    $setting = $db->table('settings')
+        ->where('nama','denda_per_hari')
+        ->get()
+        ->getRow();
+
+    $dendaPerHari = $setting ? $setting->value : 1000; // fallback kalau kosong
+
+    // =========================
+    // HITUNG DENDA REAL-TIME
+    // =========================
+    foreach($data['peminjaman'] as &$p){
+
+        $tgl_kembali = strtotime($p['tanggal_kembali']);
+        $hari_ini    = strtotime(date('Y-m-d'));
+
+        $p['denda'] = 0;
+        $p['telat_hari'] = 0;
+
+        if($hari_ini > $tgl_kembali){
+            $telat = floor(($hari_ini - $tgl_kembali) / (60*60*24));
+
+            $p['telat_hari'] = $telat;
+            $p['denda'] = $telat * $dendaPerHari;
+        }
+    }
+
     return view('peminjam/peminjaman/pinjaman_aktif',$data);
 }
 public function ajukanPengembalian($id)

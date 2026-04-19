@@ -53,6 +53,9 @@ $routes->group('admin', ['filter' => 'role:admin'], function($routes){
     $routes->get('pengembalian/detail/(:num)', 'Admin\Pengembalian::detail/$1');
     $routes->get('pengembalian/edit/(:num)', 'Admin\Pengembalian::edit/$1');
     $routes->post('pengembalian/update/(:num)', 'Admin\Pengembalian::update/$1');
+    $routes->get('pengembalian/create', 'Admin\Pengembalian::create');
+    $routes->post('pengembalian/store', 'Admin\Pengembalian::store');
+    $routes->get('pengembalian/getPinjamanByUser/(:num)', 'Admin\Pengembalian::getPinjamanByUser/$1');
     
     // Log Aktivitas
     $routes->get('log-aktivitas', 'Admin\LogAktivitas::index');
@@ -78,7 +81,11 @@ $routes->group('petugas', ['filter' => 'role:petugas'], function($routes){
     $routes->post('pengembalian/verifikasi/(:num)', 'Petugas\Pengembalian::verifikasi/$1');
     // Laporan
     $routes->get('laporan/peminjaman', 'Petugas\Laporan::peminjaman');
+    $routes->get('laporan/peminjaman/pdf', 'Petugas\Laporan::peminjamanPdf');
     $routes->get('laporan/pengembalian', 'Petugas\Laporan::pengembalian');
+    $routes->get('laporan/pengembalian/pdf', 'Petugas\Laporan::pengembalianPdf');
+    $routes->get('laporan/peminjaman/excel', 'Petugas\Laporan::peminjamanExcel');
+    $routes->get('laporan/pengembalian/excel', 'Petugas\Laporan::exportPengembalianExcel');
 });
 
 $routes->group('peminjam', ['filter' => 'role:peminjam'], function($routes){

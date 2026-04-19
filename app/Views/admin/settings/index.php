@@ -3,7 +3,7 @@
 
 <div class="mb-4 animate__animated animate__fadeIn">
     <h2 class="fw-bold text-slate-900 mb-1">Pengaturan Sistem</h2>
-    <p class="text-muted small">Konfigurasi parameter global untuk operasional APKLOAN.</p>
+    <p class="text-muted small">Konfigurasi parameter global untuk operasional Loaan.Q.</p>
 </div>
 
 <?php if(session()->getFlashdata('success')): ?>
