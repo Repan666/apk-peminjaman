@@ -225,7 +225,7 @@
                 <div class="col-lg-5 d-none d-lg-block">
                     <div class="position-relative">
                         <div class="p-5 bg-white bg-opacity-5 rounded-circle border border-white border-opacity-10 text-center animate-bounce">
-                            <i class="bi bi-shield-check display-1 text-success"></i>
+                            <i class="bi bi-boxes display-1 text-success"></i>
                         </div>
                     </div>
                 </div>
@@ -289,11 +289,12 @@
 
     <footer class="py-5 bg-white">
         <div class="container text-center">
-            <div class="mb-4">
-                <a class="navbar-brand text-dark" href="#">
-                    <i class="bi bi-stack text-success"></i> APK<span class="text-success">LOAN</span>
-                </a>
-            </div>
+            <div class="logo-container me-2">
+        <img src="<?= base_url('assets/img/logo projek ukk.png') ?>" 
+             alt="Logo APKLOAN" 
+             class="img-fluid"
+             style="height: 90px; width: auto; object-fit: contain;">
+    </div>
             <p class="text-muted small">Dibuat untuk Uji Kompetensi Keahlian (UKK) © <?= date('Y'); ?>. Seluruh Hak Cipta Dilindungi.</p>
         </div>
     </footer>

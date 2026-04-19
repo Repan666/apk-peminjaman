@@ -113,9 +113,6 @@
                     <a href="/admin/peminjaman/edit/<?= $peminjaman['id'] ?>" class="btn btn-light border rounded-pill text-dark fw-bold btn-sm">
                         <i class="bi bi-pencil-square me-2 text-muted"></i>Ubah Data
                     </a>
-                    <button onclick="window.print()" class="btn btn-light border rounded-pill text-dark fw-bold btn-sm">
-                        <i class="bi bi-printer me-2 text-muted"></i>Cetak Bukti (PDF)
-                    </button>
                 </div>
             </div>
         </div>

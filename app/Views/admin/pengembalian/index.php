@@ -6,6 +6,9 @@
         <h2 class="fw-bold text-slate-900">Manajemen Pengembalian</h2>
         <p class="text-muted small">Verifikasi pengembalian alat, hitung denda otomatis, dan pantau histori log.</p>
     </div>
+    <a href="/admin/pengembalian/create" class="btn btn-emerald px-4 py-2 rounded-pill shadow-sm fw-bold">
+            <i class="bi bi-plus-lg me-2"></i>Tambah Pengembalian
+    </a>
 </div>
 
 <div class="row mb-4">
@@ -131,6 +134,7 @@
     .btn-white { background: #fff; border: 1px solid #edf2f7; }
     .btn-white:hover { background: #f8fafc; }
     .table-hover tbody tr:hover { background-color: #f8fafc; transition: 0.2s; }
+    .btn-emerald { background-color: #10b981; color: white; border: none; transition: 0.3s; }
 </style>
 
 <?= $this->endSection() ?>

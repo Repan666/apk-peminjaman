@@ -4,13 +4,19 @@
 <div class="mb-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
     <div>
         <h2 class="fw-bold text-slate-900 mb-1">Laporan Peminjaman</h2>
-        <p class="text-muted small mb-0">Filter dan cetak histori peminjaman alat praktikum.</p>
+        <p class="text-muted small mb-0">Filter dan cetak histori peminjaman.</p>
     </div>
     <div class="d-flex gap-2 d-print-none">
-        <button onclick="window.print()" class="btn btn-emerald rounded-pill px-4 shadow-sm">
-            <i class="bi bi-printer me-2"></i>Cetak Laporan
-        </button>
-    </div>
+    <a href="<?= base_url('petugas/laporan/peminjaman/pdf') . '?' . http_build_query(request()->getGet()) ?>" 
+   class="btn btn-danger rounded-pill px-4 shadow-sm">
+   <i class="bi bi-printer me-2"></i>Cetak PDF
+    </a>
+
+    <a href="<?= base_url('petugas/laporan/peminjaman/excel') . '?' . http_build_query(request()->getGet()) ?>" 
+   class="btn btn-success rounded-pill px-4 shadow-sm">
+    <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
+</a>
+</div>
 </div>
 
 <div class="card border-0 shadow-sm rounded-4 mb-4 d-print-none">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Admin Panel' ?> | APKLOAN</title>
+    <title><?= $title ?? 'Admin Panel' ?> | Loan.Q System</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -154,7 +154,7 @@
             <i class="bi bi-journal-text"></i> Log Aktivitas
         </a>
         <a class="nav-link <?= url_is('admin/settings*') ? 'active' : '' ?>" href="<?= base_url('admin/settings') ?>">
-            <i class="bi bi-gear-fill"></i> Pengaturan Sistem
+            <i class="bi bi-cash-coin"></i> Kebijakan Denda
         </a>
 
         <span class="menu-label">INVENTARIS</span>
