@@ -64,8 +64,8 @@
             <p class="small opacity-75">Perubahan nominal denda akan berdampak pada:</p>
             <ul class="list-unstyled small opacity-75">
                 <li class="mb-2"><i class="bi bi-dot me-1"></i> Kalkulasi denda pada transaksi pengembalian baru.</li>
-                <li class="mb-2"><i class="bi bi-dot me-1"></i> Laporan keuangan denda di dashboard.</li>
-                <li><i class="bi bi-dot me-1"></i> Informasi denda pada struk/bukti pinjam.</li>
+                <li class="mb-2"><i class="bi bi-dot me-1"></i> Denda dihitung otomatis berdasarkan keterlambatan saat proses pengembalian.</li>
+                <li><i class="bi bi-dot me-1"></i> Nominal denda bersifat final setelah pengembalian diverifikasi.</li>
             </ul>
             <hr class="opacity-25">
             <p class="small mb-0 opacity-50 italic">Pastikan sudah mendiskusikan perubahan biaya dengan manajemen sebelum memperbarui data.</p>
