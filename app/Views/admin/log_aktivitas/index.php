@@ -7,9 +7,6 @@
         <p class="text-muted small">Timeline aktivitas pengguna dan perubahan sistem secara real-time.</p>
     </div>
     <div class="d-flex gap-2 d-print-none">
-        <button onclick="window.print()" class="btn btn-emerald rounded-pill px-4 shadow-sm">
-            <i class="bi bi-printer me-2"></i>Cetak Log
-        </button>
     </div>
 </div>
 
@@ -103,14 +100,6 @@
         transform: translateX(5px);
         transition: all 0.3s ease;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-    }
-
-    @media print {
-        .sidebar, .top-navbar, .d-print-none, .timeline-dot { display: none !important; }
-        .main-wrapper { margin: 0 !important; padding: 0 !important; }
-        .timeline-container { padding-left: 0 !important; }
-        .card { border: 1px solid #eee !important; box-shadow: none !important; margin-bottom: 10px !important; }
-        .timeline-line { display: none !important; }
     }
 </style>
 
